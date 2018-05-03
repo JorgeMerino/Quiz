@@ -14,15 +14,25 @@
     <!-- Style CSS -->
     <link href="css/style.css" rel="stylesheet" />
 	
-    <title>Quiz</title>
+    <title>Hello, world!</title>
   </head>
   <body>
     <div class="container">
-    	<div class="inicio">
-	    	<h1 class="grande">Quiz</h1>
-	    	<h6>Aplicación de Retos</h6>
-	    	<a class="btn btn-outline-light btn-lg btn-principal" href="crear-reto">Crear Reto</a>
-    	</div>
+    	<h2 th:text="'Reto: ' + ${reto.nombre}"></h2>
+    	<table class="table">
+		  <thead>
+		    <tr>
+		      <th scope="col">Preguntas</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+			  <tr th:each="pregunta : ${reto.preguntas}">
+		        <td th:text="${pregunta.nombre}"></td>
+		      </tr>
+		  </tbody>
+		</table>
+		
+    	<a class="btn btn-primary" th:href="@{'/reto/' + ${reto.id} + '/nueva-pregunta'}">Nueva Pregunta</a>
 	</div>    
 
     <!-- Optional JavaScript -->

@@ -44,17 +44,8 @@ public class Controlador {
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(id);
 		modelAndView.addObject("reto", reto);
-		modelAndView.setViewName("mostrarReto");
-		return modelAndView;
-	}
-	
-	@RequestMapping(value="/reto/{idReto}/nueva-pregunta", method = RequestMethod.GET)
-	public ModelAndView mostrarNuevaPregunta(@PathVariable("idReto") int idReto) {
-		ModelAndView modelAndView = new ModelAndView();
-		Reto reto = saReto.buscar(idReto);
-		modelAndView.addObject("reto", reto);
 		modelAndView.addObject("pregunta", new Pregunta());
-		modelAndView.setViewName("nuevaPregunta");
+		modelAndView.setViewName("mostrarReto");
 		return modelAndView;
 	}
 	
@@ -64,5 +55,21 @@ public class Controlador {
 		pregunta.setReto(reto);
 		saPregunta.crear(pregunta);
 		return new ModelAndView("redirect:/reto?id=" + reto.getId());
+	}
+	
+	@RequestMapping(value="/reto/{idReto}/lanzar", method = RequestMethod.POST)
+	public ModelAndView lanzarReto(@PathVariable("idReto") int idReto) {
+		//Mandar reto al tfg
+		
+		return new ModelAndView("redirect:/reto?id=" + idReto);
+	}
+	
+	@RequestMapping(value="/reto/{idReto}/resolver", method = RequestMethod.GET)
+	public ModelAndView resolverReto(@PathVariable("idReto") int idReto) {
+		ModelAndView modelAndView = new ModelAndView();
+		Reto reto = saReto.buscar(idReto);
+		modelAndView.addObject("reto", reto);
+		modelAndView.setViewName("resolverReto");
+		return modelAndView;
 	}
 }
