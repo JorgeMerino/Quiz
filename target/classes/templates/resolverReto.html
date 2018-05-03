@@ -20,36 +20,35 @@
     <div class="container">
     	<div class="contenedorReto">
     		<h1 th:text="${reto.nombre}"></h1>
-    		<th:block th:each="pregunta : ${reto.preguntas}">
+    		<div th:id="${iterador.index} + 1" th:each="pregunta, iterador : ${reto.preguntas}" th:style="${iterador.index==0} ? 'display:inline;' : 'display:none;'">
     			<h3 th:text="${pregunta.nombre}"></h3>
     			<div class="row">
-	    			<div class="card text-white bg-primary mb-3 col-6">
+	    			<div class="card text-white bg-primary mb-3 col-6" th:onclick="|respuesta('A', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">A</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionA}"></h4>
 					  </div>
 					</div>
-					<div class="card text-white bg-success mb-3 col-6">
+					<div class="card text-white bg-success mb-3 col-6" th:onclick="|respuesta('B', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">B</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionB}"></h4>
 					  </div>
 					</div>
-					<div class="card text-white bg-danger mb-3 col-6">
+					<div class="card text-white bg-danger mb-3 col-6" th:onclick="|respuesta('C', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">C</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionC}"></h4>
 					  </div>
 					</div>
-					<div class="card text-white bg-warning mb-3 col-6">
+					<div class="card text-white bg-warning mb-3 col-6" th:onclick="|respuesta('D', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">D</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionD}"></h4>
 					  </div>
 					</div>
 				</div>
-    		</th:block>
-    	
+    		</div>    	
     	</div>
 	</div>    
 
@@ -58,5 +57,26 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    
+    <script>
+    	var listaRespuestas = []
+    	var tiempoInicio = new Date().getTime();
+    	var tiempoFin;
+	    function respuesta(opcionElegida, idPregunta, numPreguntas) {
+	    	listaRespuestas.push(opcionElegida);
+	    	document.getElementById(idPregunta).style.display = "none";
+	    	if(idPregunta < numPreguntas){
+		    	document.getElementById(idPregunta + 1).style.display = "inline"; 
+	    	}
+	    	else{
+	    		tiempoFin = new Date().getTime();
+	    		var tiempoTotal = Math.abs(tiempoFin - tiempoInicio);
+	    		console.log("fin");
+	    		console.log(listaRespuestas);
+	    		console.log(tiempoTotal);
+	    	}	    	
+	    }
+    </script>
+    
   </body>
 </html>
