@@ -20,29 +20,39 @@
     <div class="container">
     	<div class="contenedorReto">
     		<h1 th:text="${reto.nombre}"></h1>
-    		<div class="cronometro" id="cronometro">0</div>
+    		<div class="row" id="resultado">
+    			<div class="col-6">
+    				<div class="cronometro" id="cronometro">0</div>
+    			</div>
+    			<div class="col-6 justify-content-right" style="text-align: right">
+    				<h4 class="aciertos" id="aciertos">Aciertos: 0</h4>
+    			</div>    			
+    		</div>
+    		<div class="mensajeFin" id="mensajeFin">
+    			<h3>¡Enhorabuena, has terminado este reto!</h3> 				
+    		</div>
     		<div th:id="${iterador.index} + 1" th:each="pregunta, iterador : ${reto.preguntas}" th:style="${iterador.index==0} ? 'display:inline;' : 'display:none;'">
     			<h3 th:text="${pregunta.nombre}"></h3>
     			<div class="row">
-	    			<div class="card text-white bg-primary mb-3 col-6" th:onclick="|respuesta('A', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
+	    			<div class="card text-white bg-primary mb-3 col-6" th:onclick="|respuesta('A', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">A</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionA}"></h4>
 					  </div>
 					</div>
-					<div class="card text-white bg-success mb-3 col-6" th:onclick="|respuesta('B', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
+					<div class="card text-white bg-success mb-3 col-6" th:onclick="|respuesta('B', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">B</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionB}"></h4>
 					  </div>
 					</div>
-					<div class="card text-white bg-danger mb-3 col-6" th:onclick="|respuesta('C', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
+					<div class="card text-white bg-danger mb-3 col-6" th:onclick="|respuesta('C', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">C</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionC}"></h4>
 					  </div>
 					</div>
-					<div class="card text-white bg-warning mb-3 col-6" th:onclick="|respuesta('D', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
+					<div class="card text-white bg-warning mb-3 col-6" th:onclick="|respuesta('D', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">D</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionD}"></h4>
@@ -62,21 +72,25 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     
     <script>
-    	var listaRespuestas = []
     	var tiempoInicio = new Date().getTime();
     	var tiempoFin;
-    	setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos
-	    function respuesta(opcionElegida, idPregunta, numPreguntas) {
-	    	listaRespuestas.push(opcionElegida);
+    	var intervalo = setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos
+    	var respuestasCorrectas = 0;
+	    function respuesta(opcionElegida, opcionCorrecta, idPregunta, numPreguntas) {
+	    	if(opcionElegida == opcionCorrecta){
+	    		respuestasCorrectas++;
+	    		document.getElementById("aciertos").innerHTML = "Aciertos: " + respuestasCorrectas + " de " + numPreguntas
+	    	}
 	    	document.getElementById(idPregunta).style.display = "none";
 	    	if(idPregunta < numPreguntas){
-		    	document.getElementById(idPregunta + 1).style.display = "inline"; 
+		    	document.getElementById(idPregunta + 1).style.display = "inline"; 		    	
 	    	}
 	    	else{
 	    		tiempoFin = new Date().getTime();
 	    		var tiempoTotal = Math.abs(tiempoFin - tiempoInicio);
-	    		console.log("fin");
-	    		console.log(listaRespuestas);
+	    		clearInterval(intervalo);
+	    		document.getElementById("mensajeFin").style.display = "inline";	    		
+	    		console.log(contadorCorrectas);
 	    		console.log(tiempoTotal);
 	    	}	    	
 	    }
