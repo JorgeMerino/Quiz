@@ -18,10 +18,15 @@
   </head>
   <body>
     <div class="container">
-    	<div class="inicio">
+    	<div class="inicio align-middle">
 	    	<h1 class="grande">Quiz</h1>
-	    	<h6>Aplicación de Retos</h6>
-	    	<a class="btn btn-outline-light btn-lg btn-principal" href="crear-reto">Crear Reto</a>
+	    	<h5>Aplicación de Retos</h5>
+	    	<form class="row justify-content-center form-inline formulario" action="crear-reto" th:object="${dtoReto}" method="POST">
+	    	  <input type="hidden" th:field="*{grupo}" th:value="${dtoReto.grupo}"/>
+			  <div class="form-group mx-sm-3 mb-2">
+			    <input type="text" class="form-control-lg input-crear-reto" th:field="*{nombre}" placeholder="Crear Reto">
+			  </div>
+			</form>
     	</div>
 	</div>    
 

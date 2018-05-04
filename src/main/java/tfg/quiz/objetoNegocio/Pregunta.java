@@ -19,7 +19,7 @@ public class Pregunta {
 	private int id;
 	
 	@NotEmpty
-	private String nombre;
+	private String cuestion;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reto")
@@ -48,12 +48,12 @@ public class Pregunta {
 		this.id = id;
 	}
 
-	public String getNombre() {
-		return nombre;
+	public String getCuestion() {
+		return cuestion;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setCuestion(String cuestion) {
+		this.cuestion = cuestion;
 	}
 
 	public Reto getReto() {

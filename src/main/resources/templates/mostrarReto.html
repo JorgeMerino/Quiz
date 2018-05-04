@@ -18,7 +18,7 @@
   </head>
   <body>
     <div class="container">
-    	<h2 th:text="'Reto: ' + ${reto.nombre}"></h2>
+    	<h2 th:text="'Reto: ' + ${dtoReto.nombre}"></h2>
     	<table class="table">
 		  <thead>
 		    <tr>
@@ -26,19 +26,22 @@
 		    </tr>
 		  </thead>
 		  <tbody>
-			  <tr th:each="pregunta : ${reto.preguntas}">
-		        <td th:text="${pregunta.nombre}"></td>
+			  <tr th:each="pregunta : ${dtoReto.preguntas}">
+		        <td th:text="${pregunta.cuestion}"></td>
 		      </tr>
 		  </tbody>
 		</table>
 		
     	<!-- Button trigger modal -->
-		<button type="button" class="btn btn-outline-light" data-toggle="modal" data-target="#nuevaPregunta">
+		<button type="button" class="btn btn-outline-light btn-lg" data-toggle="modal" data-target="#nuevaPregunta">
 		  Nueva Pregunta
 		</button>
-    	<a class="btn btn-outline-light" th:href="@{'/reto/' + ${reto.id} + '/nueva-pregunta'}">Lanzar Reto</a>
-    	
-    	
+		<form id="lanzarReto" th:action="|http://localhost:8080/asignatura/${dtoReto.grupo}/insertar-reto|" method="POST">
+			<input type="hidden" name="idReto" th:value="${dtoReto.id}"/>
+			<input type="hidden" name="nombreReto" th:value="${dtoReto.nombre}"/>
+			<button onclick="this.parentNode.submit()">Lanzar Reto</button>
+		</form>
+		
 
 		<!-- Modal -->
 		<div class="modal fade" id="nuevaPregunta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -51,10 +54,10 @@
 		        </button>
 		      </div>
 		      <div class="modal-body">
-		      	<form id="formNuevaPregunta" th:object="${pregunta}" th:action="@{/reto/{idReto}/nueva-pregunta(idReto=${reto.id})}" method="POST">
+		      	<form id="formNuevaPregunta" th:object="${pregunta}" th:action="@{/reto/{idReto}/nueva-pregunta(idReto=${dtoReto.id})}" method="POST">
 				  <div class="form-group">
 				    <label for="pregunta">Pregunta</label>
-				    <input type="text" class="form-control" th:field="*{nombre}">
+				    <input type="text" class="form-control" th:field="*{cuestion}">
 				  </div>
 				  <div class="form-group">
 				    <label for="opcionA">Opción A</label>

@@ -24,40 +24,48 @@
     			<div class="col-6">
     				<div class="cronometro" id="cronometro">0</div>
     			</div>
-    			<div class="col-6 justify-content-right" style="text-align: right">
-    				<h4 class="aciertos" id="aciertos">Aciertos: 0</h4>
+    			<div class="col-6" style="text-align: right">
+    				<h3 class="aciertos" id="aciertos">Aciertos: 0</h3>
     			</div>    			
     		</div>
     		<div class="mensajeFin" id="mensajeFin">
-    			<h3>¡Enhorabuena, has terminado este reto!</h3> 				
+    			<h2>¡Enhorabuena, has terminado este reto!</h2> 				
     		</div>
     		<div th:id="${iterador.index} + 1" th:each="pregunta, iterador : ${reto.preguntas}" th:style="${iterador.index==0} ? 'display:inline;' : 'display:none;'">
-    			<h3 th:text="${pregunta.nombre}"></h3>
+    			<h3 th:text="${pregunta.cuestion}"></h3>
     			<div class="row">
-	    			<div class="card text-white bg-primary mb-3 col-6" th:onclick="|respuesta('A', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
+    			  <div class="col-6">
+	    			<div class="card text-white bg-primary mb-3 col-12" th:onclick="|respuesta('A', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">A</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionA}"></h4>
 					  </div>
 					</div>
-					<div class="card text-white bg-success mb-3 col-6" th:onclick="|respuesta('B', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
+				  </div>
+				  <div class="col-6">
+					<div class="card text-white bg-success mb-3 col-12" th:onclick="|respuesta('B', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">B</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionB}"></h4>
 					  </div>
 					</div>
-					<div class="card text-white bg-danger mb-3 col-6" th:onclick="|respuesta('C', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
+				  </div>
+				  <div class="col-6">
+					<div class="card text-white bg-danger mb-3 col-12" th:onclick="|respuesta('C', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">C</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionC}"></h4>
 					  </div>
 					</div>
-					<div class="card text-white bg-warning mb-3 col-6" th:onclick="|respuesta('D', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
+				  </div>
+				  <div class="col-6">
+					<div class="card text-white bg-warning mb-3 col-12" th:onclick="|respuesta('D', '${pregunta.correcta}', ${iterador.index} + 1, ${#lists.size(reto.preguntas)} )|">
 					  <div class="card-header">D</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opcionD}"></h4>
 					  </div>
 					</div>
+				  </div>
 				</div>
     		</div>
     		
@@ -83,13 +91,13 @@
 	    	}
 	    	document.getElementById(idPregunta).style.display = "none";
 	    	if(idPregunta < numPreguntas){
-		    	document.getElementById(idPregunta + 1).style.display = "inline"; 		    	
+		    	document.getElementById(idPregunta + 1).style.display = "block"; 		    	
 	    	}
 	    	else{
 	    		tiempoFin = new Date().getTime();
 	    		var tiempoTotal = Math.abs(tiempoFin - tiempoInicio);
 	    		clearInterval(intervalo);
-	    		document.getElementById("mensajeFin").style.display = "inline";	    		
+	    		document.getElementById("mensajeFin").style.display = "block";	    		
 	    		console.log(contadorCorrectas);
 	    		console.log(tiempoTotal);
 	    	}	    	

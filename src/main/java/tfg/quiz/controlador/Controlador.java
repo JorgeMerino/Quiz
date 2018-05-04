@@ -2,12 +2,14 @@ package tfg.quiz.controlador;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import tfg.quiz.dto.DTOReto;
 import tfg.quiz.objetoNegocio.Pregunta;
 import tfg.quiz.objetoNegocio.Reto;
 import tfg.quiz.servicioAplicacion.SAPregunta;
@@ -21,20 +23,18 @@ public class Controlador {
 	private SAPregunta saPregunta;
 	
 	@RequestMapping(value="/", method = RequestMethod.GET)
-	public ModelAndView mostrarInicio() {
-		return new ModelAndView("index");
-	}
-	
-	@RequestMapping(value="/crear-reto", method = RequestMethod.GET)
-	public ModelAndView mostrarCrearReto() {
+	public ModelAndView mostrarInicio(int idAsignatura) {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("crearReto");
+		DTOReto dtoReto = new DTOReto();
+		dtoReto.setGrupo(idAsignatura);
+		modelAndView.addObject("dtoReto", dtoReto);
+		modelAndView.setViewName("index");
 		return modelAndView;
 	}
 	
 	@RequestMapping(value="/crear-reto", method = RequestMethod.POST)
-	public ModelAndView crearReto(String nombreReto) {
-		Reto reto = new Reto(nombreReto);
+	public ModelAndView crearReto(DTOReto dtoReto) {
+		Reto reto = Reto.toObjetoNegocio(dtoReto);
 		saReto.crear(reto);
 		return new ModelAndView("redirect:/reto?id=" + reto.getId());
 	}
@@ -43,7 +43,8 @@ public class Controlador {
 	public ModelAndView mostrarReto(int id) {
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(id);
-		modelAndView.addObject("reto", reto);
+		DTOReto dtoReto = DTOReto.toDTO(reto);
+		modelAndView.addObject("dtoReto", dtoReto);
 		modelAndView.addObject("pregunta", new Pregunta());
 		modelAndView.setViewName("mostrarReto");
 		return modelAndView;
@@ -55,13 +56,6 @@ public class Controlador {
 		pregunta.setReto(reto);
 		saPregunta.crear(pregunta);
 		return new ModelAndView("redirect:/reto?id=" + reto.getId());
-	}
-	
-	@RequestMapping(value="/reto/{idReto}/lanzar", method = RequestMethod.POST)
-	public ModelAndView lanzarReto(@PathVariable("idReto") int idReto) {
-		//Mandar reto al tfg
-		
-		return new ModelAndView("redirect:/reto?id=" + idReto);
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/resolver", method = RequestMethod.GET)

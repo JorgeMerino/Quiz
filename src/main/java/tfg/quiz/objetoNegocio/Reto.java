@@ -12,6 +12,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
+import tfg.quiz.dto.DTOReto;
+
 @Entity
 @Table(name = "retos")
 public class Reto {
@@ -21,6 +23,8 @@ public class Reto {
 	
 	@NotEmpty
 	private String nombre;
+	
+	private int grupo;
 	
 	@OneToMany(
 		mappedBy = "reto", 
@@ -37,6 +41,15 @@ public class Reto {
 		this.nombre = nombre;
 		this.preguntas = new HashSet<Pregunta>();
 	}
+	
+	public static Reto toObjetoNegocio(DTOReto dtoReto) {
+		Reto reto = new Reto();
+		reto.setId(dtoReto.getId());
+		reto.setNombre(dtoReto.getNombre());
+		reto.setGrupo(dtoReto.getGrupo());
+		reto.setPreguntas(dtoReto.getPreguntas());
+		return reto;
+	}
 
 	public int getId() {
 		return id;
@@ -52,6 +65,14 @@ public class Reto {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+	public int getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(int grupo) {
+		this.grupo = grupo;
 	}
 
 	public Set<Pregunta> getPreguntas() {
