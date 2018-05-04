@@ -20,6 +20,7 @@
     <div class="container">
     	<div class="contenedorReto">
     		<h1 th:text="${reto.nombre}"></h1>
+    		<div class="cronometro" id="cronometro">0</div>
     		<div th:id="${iterador.index} + 1" th:each="pregunta, iterador : ${reto.preguntas}" th:style="${iterador.index==0} ? 'display:inline;' : 'display:none;'">
     			<h3 th:text="${pregunta.nombre}"></h3>
     			<div class="row">
@@ -48,8 +49,10 @@
 					  </div>
 					</div>
 				</div>
-    		</div>    	
+    		</div>
+    		
     	</div>
+    	
 	</div>    
 
     <!-- Optional JavaScript -->
@@ -62,6 +65,7 @@
     	var listaRespuestas = []
     	var tiempoInicio = new Date().getTime();
     	var tiempoFin;
+    	setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos
 	    function respuesta(opcionElegida, idPregunta, numPreguntas) {
 	    	listaRespuestas.push(opcionElegida);
 	    	document.getElementById(idPregunta).style.display = "none";
@@ -75,6 +79,10 @@
 	    		console.log(listaRespuestas);
 	    		console.log(tiempoTotal);
 	    	}	    	
+	    }
+	    function cronometro() {
+	    	var tiempoActual = new Date().getTime() - tiempoInicio;
+	    	document.getElementById("cronometro").innerHTML = Math.trunc(tiempoActual/1000);
 	    }
     </script>
     

@@ -33,7 +33,7 @@ h1.grande{
 	padding: 5%;
 	color: #29B6F6;
 	width: 80%;
-	margin: 0 auto;
+	margin: 5% auto;
 }
 
 .card{
@@ -42,4 +42,13 @@ h1.grande{
 
 .card-header{
 	text-align: left;
+}
+
+.cronometro{
+	background: #29B6F6;
+	color: white;
+	height: 45px;
+	width: 50px;
+	font-size: 1.7em;
+	border-radius: 100px;
 }
