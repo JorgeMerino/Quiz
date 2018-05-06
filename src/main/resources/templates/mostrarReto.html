@@ -36,10 +36,10 @@
 		<button type="button" class="btn btn-outline-light btn-lg" data-toggle="modal" data-target="#nuevaPregunta">
 		  Nueva Pregunta
 		</button>
-		<form id="lanzarReto" th:action="|http://localhost:8080/asignatura/${dtoReto.grupo}/insertar-reto|" method="POST">
+		<form th:if="${!dtoReto.preguntas.empty}" id="lanzarReto" th:action="|http://localhost:8080/asignatura/${dtoReto.grupo}/insertar-reto|" method="POST">
 			<input type="hidden" name="idReto" th:value="${dtoReto.id}"/>
 			<input type="hidden" name="nombreReto" th:value="${dtoReto.nombre}"/>
-			<button onclick="this.parentNode.submit()">Lanzar Reto</button>
+			<button class="btn btn-outline-light btn-lg" onclick="this.parentNode.submit()">Lanzar Reto</button>
 		</form>
 		
 

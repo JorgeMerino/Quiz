@@ -59,10 +59,12 @@ public class Controlador {
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/resolver", method = RequestMethod.GET)
-	public ModelAndView resolverReto(@PathVariable("idReto") int idReto) {
+	public ModelAndView resolverReto(@PathVariable("idReto") int idReto,
+			int idAlumno ) {
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
 		modelAndView.addObject("reto", reto);
+		modelAndView.addObject("idAlumno", idAlumno);
 		modelAndView.setViewName("resolverReto");
 		return modelAndView;
 	}

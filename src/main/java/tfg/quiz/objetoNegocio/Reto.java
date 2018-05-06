@@ -18,7 +18,7 @@ import tfg.quiz.dto.DTOReto;
 @Table(name = "retos")
 public class Reto {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
 	@NotEmpty

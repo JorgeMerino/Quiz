@@ -71,6 +71,13 @@
     		
     	</div>
     	
+    	<form id="form-enviarResultados" action="http://localhost:8080/recibirResultados" method="POST">
+	    	<input type="hidden" id="form-aciertos" name="aciertos"/>
+	    	<input type="hidden" id="form-numPreguntas" name="numPreguntas"/>
+	    	<input type="hidden" id="form-tiempo" name="tiempo"/>
+	    	<input type="hidden" name="idReto" th:value="${reto.id}"/>
+	    	<input type="hidden" name="idAlumno" th:value="${idAlumno}"/>
+    	</form>
 	</div>    
 
     <!-- Optional JavaScript -->
@@ -84,6 +91,7 @@
     	var tiempoFin;
     	var intervalo = setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos
     	var respuestasCorrectas = 0;
+    	
 	    function respuesta(opcionElegida, opcionCorrecta, idPregunta, numPreguntas) {
 	    	if(opcionElegida == opcionCorrecta){
 	    		respuestasCorrectas++;
@@ -97,15 +105,24 @@
 	    		tiempoFin = new Date().getTime();
 	    		var tiempoTotal = Math.abs(tiempoFin - tiempoInicio);
 	    		clearInterval(intervalo);
-	    		document.getElementById("mensajeFin").style.display = "block";	    		
-	    		console.log(contadorCorrectas);
-	    		console.log(tiempoTotal);
+	    		document.getElementById("mensajeFin").style.display = "block";	 
+	    		
+	    		enviarResultados(respuestasCorrectas, numPreguntas, tiempoTotal);
 	    	}	    	
 	    }
+	    
 	    function cronometro() {
 	    	var tiempoActual = new Date().getTime() - tiempoInicio;
 	    	document.getElementById("cronometro").innerHTML = Math.trunc(tiempoActual/1000);
 	    }
+	    
+	    function enviarResultados(aciertos, numPreguntas, tiempo) {
+	    	document.getElementById("form-aciertos").value = aciertos;
+	    	document.getElementById("form-numPreguntas").value = numPreguntas;
+	    	document.getElementById("form-tiempo").value = tiempo;
+	    	document.getElementById("form-enviarResultados").submit();
+	    } 
+	    
     </script>
     
   </body>
