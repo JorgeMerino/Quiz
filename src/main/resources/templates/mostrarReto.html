@@ -17,30 +17,32 @@
     <title>Quiz</title>
   </head>
   <body>
-    <div class="container">
-    	<h2 th:text="'Reto: ' + ${dtoReto.nombre}"></h2>
-    	<table class="table">
-		  <thead>
-		    <tr>
-		      <th scope="col">Preguntas</th>
-		    </tr>
-		  </thead>
-		  <tbody>
-			  <tr th:each="pregunta : ${dtoReto.preguntas}">
-		        <td th:text="${pregunta.cuestion}"></td>
-		      </tr>
-		  </tbody>
-		</table>
-		
-    	<!-- Button trigger modal -->
-		<button type="button" class="btn btn-outline-light btn-lg" data-toggle="modal" data-target="#nuevaPregunta">
-		  Nueva Pregunta
-		</button>
-		<form th:if="${!dtoReto.preguntas.empty}" id="lanzarReto" th:action="|http://localhost:8080/asignatura/${dtoReto.grupo}/insertar-reto|" method="POST">
-			<input type="hidden" name="idReto" th:value="${dtoReto.id}"/>
-			<input type="hidden" name="nombreReto" th:value="${dtoReto.nombre}"/>
-			<button class="btn btn-outline-light btn-lg" onclick="this.parentNode.submit()">Lanzar Reto</button>
-		</form>
+    <div class="container">    	
+    	<div class="col-6 tablaPreguntas">
+    		<h2 th:text="'Reto - ' + ${dtoReto.nombre}"></h2>
+	    	<table class="table table-striped">
+			  <thead>
+			    <tr>
+			      <th scope="col">Preguntas</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+				  <tr th:each="pregunta : ${dtoReto.preguntas}">
+			        <td th:text="${pregunta.cuestion}"></td>
+			      </tr>
+			  </tbody>
+			</table>
+			
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-azul btn-lg" data-toggle="modal" data-target="#nuevaPregunta">
+			  Nueva Pregunta
+			</button>
+			<form th:if="${!dtoReto.preguntas.empty}" id="lanzarReto" th:action="|http://localhost:8080/asignatura/${dtoReto.grupo}/insertar-reto|" method="POST">
+				<input type="hidden" name="idReto" th:value="${dtoReto.id}"/>
+				<input type="hidden" name="nombreReto" th:value="${dtoReto.nombre}"/>
+				<button class="btn btn-azul btn-lg" onclick="this.parentNode.submit()">Lanzar Reto</button>
+			</form>
+		</div>
 		
 
 		<!-- Modal -->

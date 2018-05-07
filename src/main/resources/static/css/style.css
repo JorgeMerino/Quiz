@@ -15,12 +15,33 @@ h1.grande{
 	font-size: 4em;
 }
 
-.btn-principal{
-	margin-top: 3%;
+.btn-azul{
+	background: #29B6F6;
+	color: white;
+}
+
+.btn-azul:hover{
+	background: #0288D1;
+	color: white;
 }
 
 .formulario{
 	margin-top: 3%;
+}
+
+#lanzarReto{
+	display: inline;
+}
+
+.tablaPreguntas{
+	margin: 5% auto;
+	padding: 5% 5% 3%;
+	background: white;
+	color: #29B6F6;
+}
+
+.tablaPreguntas > table{
+	margin: 20px 0px 50px;
 }
 
 .modal{
