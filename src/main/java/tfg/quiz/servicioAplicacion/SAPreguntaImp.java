@@ -15,4 +15,14 @@ public class SAPreguntaImp implements SAPregunta {
 	public void crear(Pregunta pregunta) {
 		repositorioPregunta.save(pregunta);
 	}
+
+	@Override
+	public Pregunta buscar(int id) {
+		return repositorioPregunta.findById(id);
+	}
+
+	@Override
+	public void eliminar(Pregunta pregunta) {
+		repositorioPregunta.delete(pregunta);
+	}
 }

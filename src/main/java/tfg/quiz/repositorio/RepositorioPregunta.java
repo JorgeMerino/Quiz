@@ -8,4 +8,6 @@ import tfg.quiz.objetoNegocio.Pregunta;
 @Repository("repositorioPregunta")
 public interface RepositorioPregunta extends JpaRepository<Pregunta, Integer> {
 
+	Pregunta findById(int id);
+
 }

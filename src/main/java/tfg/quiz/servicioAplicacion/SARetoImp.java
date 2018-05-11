@@ -25,4 +25,9 @@ public class SARetoImp implements SAReto {
 	public void buscarTodos() {
 		repositorioReto.findAll();
 	}
+
+	@Override
+	public void eliminar(Reto reto) {
+		repositorioReto.delete(reto);
+	}
 }

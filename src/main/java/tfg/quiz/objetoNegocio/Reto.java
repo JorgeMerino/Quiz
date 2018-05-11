@@ -1,7 +1,7 @@
 package tfg.quiz.objetoNegocio;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -19,35 +19,36 @@ import tfg.quiz.dto.DTOReto;
 @Table(name = "retos")
 public class Reto {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
 	@NotEmpty
 	private String nombre;
 	
-	private int grupo;
+	private boolean disponible;
 	
 	@OneToMany(
 		mappedBy = "reto", 
 		cascade = CascadeType.ALL, 
 		orphanRemoval = true
 	)
-	private Set<Pregunta> preguntas;
+	private List<Pregunta> preguntas;
 	
 	public Reto() {
-		this.preguntas = new HashSet<Pregunta>();
+		this.disponible = false;
+		this.preguntas = new ArrayList<Pregunta>();
 	}
 	
 	public Reto(String nombre) {
 		this.nombre = nombre;
-		this.preguntas = new HashSet<Pregunta>();
+		this.disponible = false;
+		this.preguntas = new ArrayList<Pregunta>();
 	}
 	
 	public static Reto toObjetoNegocio(DTOReto dtoReto) {
 		Reto reto = new Reto();
 		reto.setId(dtoReto.getId());
 		reto.setNombre(dtoReto.getNombre());
-		reto.setGrupo(dtoReto.getGrupo());
 		reto.setPreguntas(dtoReto.getPreguntas());
 		return reto;
 	}
@@ -68,19 +69,19 @@ public class Reto {
 		this.nombre = nombre;
 	}
 
-	public int getGrupo() {
-		return grupo;
+	public boolean isDisponible() {
+		return disponible;
 	}
 
-	public void setGrupo(int grupo) {
-		this.grupo = grupo;
+	public void setDisponible(boolean disponible) {
+		this.disponible = disponible;
 	}
 
-	public Set<Pregunta> getPreguntas() {
+	public List<Pregunta> getPreguntas() {
 		return preguntas;
 	}
 
-	public void setPreguntas(Set<Pregunta> preguntas) {
+	public void setPreguntas(List<Pregunta> preguntas) {
 		this.preguntas = preguntas;
 	}
 }

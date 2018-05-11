@@ -1,1 +1,1 @@
-INSERT INTO `retos` (`id`, `nombre`, `grupo`) VALUES (1, 'Prueba', 1);
+INSERT INTO `retos` (`id`, `nombre`, `disponible`) VALUES (1, 'Prueba', 0);

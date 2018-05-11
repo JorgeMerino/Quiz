@@ -7,6 +7,10 @@ div.container{
 	text-align: center;
 }
 
+a:hover{
+	cursor: pointer;
+}
+
 .inicio{
 	margin-top: 20%;
 }
@@ -22,6 +26,11 @@ h1.grande{
 
 .btn-azul:hover{
 	background: #0288D1;
+	color: white;
+}
+
+.btn-azul[disabled=""]:hover {
+    background: #29B6F6;
 	color: white;
 }
 
@@ -85,4 +94,17 @@ input.input-crear-reto[type="text"] {
 	color: white;
 	border: 1px solid white;
 	text-align: center;
+}
+
+div.custom-radio {
+    margin-top: 15px;
+}
+
+a.borrarOpcion i{
+	margin-top: 32px;
+	cursor: pointer;
+}
+
+i.icono-rojo{
+	color: #F44336;
 }

@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <!-- Style CSS -->
-    <link href="css/style.css" rel="stylesheet" />
+    <link href="../../css/style.css" rel="stylesheet" />
 	
     <title>Quiz</title>
   </head>
@@ -24,76 +24,33 @@
 			  <thead>
 			    <tr>
 			      <th scope="col">Preguntas</th>
+			      <th scope="col">Modificar</th>
+			      <th scope="col">Eliminar</th>
 			    </tr>
 			  </thead>
 			  <tbody>
 				  <tr th:each="pregunta : ${dtoReto.preguntas}">
 			        <td th:text="${pregunta.cuestion}"></td>
+			        <td><a th:href="|/pregunta/${pregunta.id}/eliminar|"><i class="material-icons">create</i></a></td>
+			        <td>
+			        	<form th:action="|/reto/${dtoReto.id}/eliminar-pregunta|" method="POST">
+			        		<input type="hidden" name="idPregunta" th:value="${pregunta.id}"/>
+			        		<a onclick="this.parentNode.submit()" title="Eliminar Pregunta"><i class="material-icons icono-rojo">clear</i></a>
+			        	</form>
+			        </td>
 			      </tr>
 			  </tbody>
 			</table>
 			
 			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-azul btn-lg" data-toggle="modal" data-target="#nuevaPregunta">
-			  Nueva Pregunta
-			</button>
+			<a type="button" class="btn btn-azul btn-lg" th:href="|/reto/${dtoReto.id}/insertar-pregunta|">
+			  Añadir Pregunta
+			</a>
 			<form th:if="${!dtoReto.preguntas.empty}" id="lanzarReto" th:action="|http://localhost:8080/asignatura/${dtoReto.grupo}/insertar-reto|" method="POST">
 				<input type="hidden" name="idReto" th:value="${dtoReto.id}"/>
 				<input type="hidden" name="nombreReto" th:value="${dtoReto.nombre}"/>
 				<button class="btn btn-azul btn-lg" onclick="this.parentNode.submit()">Lanzar Reto</button>
 			</form>
-		</div>
-		
-
-		<!-- Modal -->
-		<div class="modal fade" id="nuevaPregunta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Nueva Pregunta</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <div class="modal-body">
-		      	<form id="formNuevaPregunta" th:object="${pregunta}" th:action="@{/reto/{idReto}/nueva-pregunta(idReto=${dtoReto.id})}" method="POST">
-				  <div class="form-group">
-				    <label for="pregunta">Pregunta</label>
-				    <input type="text" class="form-control" th:field="*{cuestion}">
-				  </div>
-				  <div class="form-group">
-				    <label for="opcionA">Opción A</label>
-				    <input type="text" class="form-control" th:field="*{opcionA}">
-				  </div>
-				  <div class="form-group">
-				    <label for="opcionA">Opción B</label>
-				    <input type="text" class="form-control" th:field="*{opcionB}">
-				  </div>
-				  <div class="form-group">
-				    <label for="opcionA">Opción C</label>
-				    <input type="text" class="form-control" th:field="*{opcionC}">
-				  </div>
-				  <div class="form-group">
-				    <label for="opcionA">Opción D</label>
-				    <input type="text" class="form-control" th:field="*{opcionD}">
-				  </div>
-				  <div class="form-group">
-				    <label for="correcta">Opción Correcta</label>
-				    <select class="form-control" th:field="*{correcta}">
-				      <option th:value="${T(tfg.quiz.objetoNegocio.Opcion).A}">Opción A</option>
-				      <option th:value="${T(tfg.quiz.objetoNegocio.Opcion).B}">Opción B</option>
-				      <option th:value="${T(tfg.quiz.objetoNegocio.Opcion).C}">Opción C</option>
-				      <option th:value="${T(tfg.quiz.objetoNegocio.Opcion).D}">Opción D</option>
-				    </select>
-				  </div>
-				</form>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-		        <button type="submit" class="btn btn-primary" form="formNuevaPregunta">Añadir Pregunta</button>
-		      </div>
-		    </div>
-		  </div>
 		</div>
 	</div>    
 

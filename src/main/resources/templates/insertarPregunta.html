@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+	
+	<!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Style CSS -->
+    <link href="../../../css/style.css" rel="stylesheet" />
+	
+    <title>Quiz</title>
+  </head>
+  <body>
+    <div class="container"> 
+    	<div class="col-8 tablaPreguntas">
+    		<h2 th:text="'Reto - ' + ${dtoReto.nombre}"></h2> 	
+	    	<form id="formNuevaPregunta" th:action="@{/reto/{idReto}/insertar-pregunta(idReto=${dtoReto.id})}" method="POST">
+			  <div class="form-group">
+			    <label for="pregunta">Pregunta</label>
+			    <input type="text" class="form-control" name="nombrePregunta" required>
+			  </div>
+			  <table class="table">
+			   <thead>			  
+			  	<tr>
+			  		<th>Opción</th>
+			  		<th>Correcta</th>
+			  		<th>Eliminar</th>
+			  	</tr>
+			   </thead>
+			   <tbody>
+			   </tbody>
+			  </table>
+			</form>
+			<button type="button" class="btn btn-azul btn-lg insertarOpcion">
+			  Añadir Opción
+			</button>
+			<button type="submit" class="btn btn-azul btn-lg mandarFormulario" form="formNuevaPregunta">
+			  Añadir Pregunta
+			</button>
+		</div>
+	</div>    
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  
+  	<script>
+	  	$(document).ready(function(){
+	  		var i = 0;
+	  		while( i < 2 ){
+	  			insertarFilaOpcion();
+	  			i++
+	  			comprobarBotones();
+	  		}
+	  		
+	  		$("button.insertarOpcion").on("click", function(){
+	  			if($("tbody").children().length < 4){
+	  				insertarFilaOpcion();
+	  				i++;
+	  			}
+	  			comprobarBotones();
+	  	    });
+	  		
+	  		$('tbody').on( "click", "tr td a.borrarOpcion", function() {
+	  			$(this).closest("tr").remove();
+	  			comprobarBotones();
+	  		}); 		
+	  		
+	  		
+	  		function insertarFilaOpcion(){
+	  			$("tbody").append(
+	  				`<tr>
+				  		<td>					  
+						  <div class="form-group">
+						    <label for="opcion${i}"></label>
+						    <input type="text" class="form-control" name="nombreOpcion${i}" id="nombreOpcion${i}" required>					    
+						  </div>
+						</td>
+						<td>
+							<div class="custom-control custom-radio">
+							  <input type="radio" id="customRadio${i}" name="customRadio" value="opcionCorrecta${i}" class="custom-control-input" required>
+							  <label class="custom-control-label" for="customRadio${i}"></label>
+							</div>
+						</td>
+						<td>
+							<a class="borrarOpcion"><i class="material-icons icono-rojo">clear</i></a>
+						</td>
+					</tr>`
+				)
+	  		}
+	  		
+	  		function comprobarBotones() {
+	  			console.log(i);
+	  			if($("tbody").children().length <= 2){
+	  		    	$("a.borrarOpcion").hide();
+	  		    }
+	  	    	else{
+	  	    		$("a.borrarOpcion").show();
+	  	    	}
+	  			
+	  			if($("tbody").children().length < 4){
+	  				$("button.insertarOpcion").prop("disabled", false);
+	  			}
+	  			else{
+	  				$("button.insertarOpcion").prop("disabled", true);
+	  			}
+	  		}
+	  	});
+  	</script>
+  </body>
+</html>
