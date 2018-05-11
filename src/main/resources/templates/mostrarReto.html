@@ -18,20 +18,18 @@
   </head>
   <body>
     <div class="container">    	
-    	<div class="col-6 tablaPreguntas">
+    	<div class="col-8 tablaPreguntas">
     		<h2 th:text="'Reto - ' + ${dtoReto.nombre}"></h2>
 	    	<table class="table table-striped">
 			  <thead>
 			    <tr>
 			      <th scope="col">Preguntas</th>
-			      <th scope="col">Modificar</th>
 			      <th scope="col">Eliminar</th>
 			    </tr>
 			  </thead>
 			  <tbody>
 				  <tr th:each="pregunta : ${dtoReto.preguntas}">
-			        <td th:text="${pregunta.cuestion}"></td>
-			        <td><a th:href="|/pregunta/${pregunta.id}/eliminar|"><i class="material-icons">create</i></a></td>
+			        <td><a th:text="${pregunta.cuestion}" th:href="|/reto/${dtoReto.id}/modificar-pregunta?id=${pregunta.id}|"></td>
 			        <td>
 			        	<form th:action="|/reto/${dtoReto.id}/eliminar-pregunta|" method="POST">
 			        		<input type="hidden" name="idPregunta" th:value="${pregunta.id}"/>

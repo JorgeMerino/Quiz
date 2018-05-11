@@ -21,9 +21,10 @@
     	<div class="col-8 tablaPreguntas">
     		<h2 th:text="'Reto - ' + ${dtoReto.nombre}"></h2> 	
 	    	<form id="formNuevaPregunta" th:action="@{/reto/{idReto}/insertar-pregunta(idReto=${dtoReto.id})}" method="POST">
+	    	  <input type="hidden" name="idPregunta" th:value="${pregunta.id}"/>
 			  <div class="form-group">
 			    <label for="pregunta">Pregunta</label>
-			    <input type="text" class="form-control" name="nombrePregunta" required>
+			    <input type="text" class="form-control" name="nombrePregunta" th:value="${pregunta.cuestion}" required>
 			  </div>
 			  <table class="table">
 			   <thead>			  
@@ -34,6 +35,23 @@
 			  	</tr>
 			   </thead>
 			   <tbody>
+			   	<tr th:each="opcion, iterador : ${pregunta.opciones}">
+			  		<td>					  
+					  <div class="form-group">
+					    <label th:for="|nombreOpcion${iterador.index}|"></label>
+					    <input type="text" class="form-control" th:name="|nombreOpcion${iterador.index}|" th:id="|nombreOpcion${iterador.index}|" th:value="${opcion.respuesta}" required>					    
+					  </div>
+					</td>
+					<td>
+						<div class="custom-control custom-radio">
+						  <input type="radio" th:id="|opcionCorrecta${iterador.index}|" th:value="|opcionCorrecta${iterador.index}|" name="customRadio" th:checked="${opcion.correcta==true ? true : false}" class="custom-control-input" required>
+						  <label class="custom-control-label" th:for="|opcionCorrecta${iterador.index}|"></label>
+						</div>
+					</td>
+					<td>
+						<a class="borrarOpcion"><i class="material-icons icono-rojo">clear</i></a>
+					</td>
+				</tr>
 			   </tbody>
 			  </table>
 			</form>
@@ -41,7 +59,7 @@
 			  Añadir Opción
 			</button>
 			<button type="submit" class="btn btn-azul btn-lg mandarFormulario" form="formNuevaPregunta">
-			  Añadir Pregunta
+			  Guardar Pregunta
 			</button>
 		</div>
 	</div>    
@@ -54,7 +72,7 @@
   
   	<script>
 	  	$(document).ready(function(){
-	  		var i = 0;
+	  		var i = $("tbody").children().length;
 	  		while( i < 2 ){
 	  			insertarFilaOpcion();
 	  			i++
@@ -80,7 +98,7 @@
 	  				`<tr>
 				  		<td>					  
 						  <div class="form-group">
-						    <label for="opcion${i}"></label>
+						    <label for="nombreOpcion${i}"></label>
 						    <input type="text" class="form-control" name="nombreOpcion${i}" id="nombreOpcion${i}" required>					    
 						  </div>
 						</td>

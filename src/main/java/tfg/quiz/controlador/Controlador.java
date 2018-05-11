@@ -52,12 +52,11 @@ public class Controlador {
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/insertar-pregunta", method = RequestMethod.GET)
-	public ModelAndView mostrarInsertarPregunta(@PathVariable("idReto") int idReto, @ModelAttribute("pregunta") Pregunta pregunta) {
+	public ModelAndView mostrarInsertarPregunta(@PathVariable("idReto") int idReto) {
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
 		modelAndView.addObject("dtoReto", reto);
 		modelAndView.addObject("pregunta", new Pregunta());
-		modelAndView.addObject("opcion", new Opcion());
 		modelAndView.setViewName("insertarPregunta");
 		return modelAndView;
 	}
@@ -65,12 +64,23 @@ public class Controlador {
 	@RequestMapping(value="/reto/{idReto}/insertar-pregunta", method = RequestMethod.POST)
 	public ModelAndView insertarPregunta(@PathVariable("idReto") int idReto, @RequestParam Map<String, String> parametros) {
 		Reto reto = saReto.buscar(idReto);
-		Pregunta pregunta = new Pregunta();
+		List<Opcion> opciones = new ArrayList<Opcion>();
+		Pregunta pregunta = saPregunta.buscar(Integer.parseInt(parametros.get("idPregunta")));
+		//Si existe en la base de datos:
+		if(pregunta != null) {
+			//Limpiamos las opciones antiguas:
+			pregunta.getOpciones().clear();
+			pregunta.getOpciones().addAll(opciones);
+		}
+		else {
+			pregunta = new Pregunta();
+		}
+		
 		pregunta.setCuestion(parametros.get("nombrePregunta"));
 		pregunta.setReto(reto);		
 		saPregunta.crear(pregunta);
 		
-		List<Opcion> opciones = new ArrayList<Opcion>();
+		
 		Opcion opcion;
 		int idOpcion;
 		
@@ -97,6 +107,17 @@ public class Controlador {
 		return new ModelAndView("redirect:/reto/" + reto.getId());
 	}
 	
+	@RequestMapping(value="/reto/{idReto}/modificar-pregunta", method = RequestMethod.GET)
+	public ModelAndView mostrarModificarPregunta(@PathVariable("idReto") int idReto, @ModelAttribute("id") int idPregunta) {
+		ModelAndView modelAndView = new ModelAndView();
+		Reto reto = saReto.buscar(idReto);
+		Pregunta pregunta = saPregunta.buscar(idPregunta);
+		modelAndView.addObject("dtoReto", reto);
+		modelAndView.addObject("pregunta", pregunta);
+		modelAndView.setViewName("insertarPregunta");
+		return modelAndView;
+	}
+	
 	@RequestMapping(value="/reto/{idReto}/eliminar-pregunta", method = RequestMethod.POST)
 	public ModelAndView eliminarPregunta(@PathVariable("idReto") int idReto, int idPregunta) {
 		Reto reto = saReto.buscar(idReto);
@@ -105,8 +126,6 @@ public class Controlador {
 		
 		return new ModelAndView("redirect:/reto/" + reto.getId());
 	}
-	
-	
 	
 	@RequestMapping(value="/reto/{idReto}/resolver", method = RequestMethod.GET)
 	public ModelAndView resolverReto(@PathVariable("idReto") int idReto,
