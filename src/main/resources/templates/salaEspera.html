@@ -17,24 +17,53 @@
     <title>Quiz</title>
   </head>
   <body>
-    <div class="container">
-    	<div class="inicio align-middle">
-	    	<h1 class="grande">Quiz</h1>
-	    	<h5>Aplicación de Retos</h5>
-			<h6 th:text="|Reto - ${dtoReto.nombre}|"></h6>
-	    	<form class="row justify-content-center form-inline formulario" action="insertar-nick" th:object="${usuario}" method="POST">
-	    	  <input type="hidden" name="idUsuario" th:value="${idUsuario}"/>
-			  <div class="form-group mx-sm-3 mb-2">
-			    <input type="text" class="form-control-lg input-crear-reto" name="nickUsuario" placeholder="Introduce tu nick">
-			  </div>
+    <div class="container"> 
+    	<div class="col-8 tablaPreguntas">
+    		<h2 th:text="'Reto - ' + ${dtoReto.nombre}"></h2>
+    		<h3>Participantes</h3>
+	    	<div class="row participantes">
+	    	</div>
+	    	<form id="comenzarReto" th:action="|reto/${dtoReto.id}/comenzar-reto|" method="POST">
+				<button class="btn btn-azul btn-lg" onclick="this.parentNode.submit()">Comenzar Reto</button>
 			</form>
-    	</div>
+			
+		</div>
 	</div>    
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  
+  	<script>
+	  	$(document).ready(function(){
+	  		setInterval(obtenerParticipantes, 2000);
+	  		
+	  		function obtenerParticipantes() {
+		  		$.ajax({
+		  			type: "GET",
+		  			url: "obtener-participantes",
+		  			dataType: "text",
+		  			success: function(datos){
+		  				participantes = JSON.parse(datos);
+		  				$("div.participantes").empty();
+		  				participantes.forEach(function(participante) {
+		  		  			insertarParticipante(participante);
+		  		  		});
+		  			}
+		  		});
+	  		}
+	  		
+	  		
+	  		function insertarParticipante(participante){
+	  			$("div.participantes").append(
+	  				`<div class="col-6 col-sm-4 participante">
+	  					<span>${participante.nick} </span>
+	  				</div>`
+				);
+	  		}
+	  	});
+  	</script>
   </body>
 </html>
