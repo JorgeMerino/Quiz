@@ -1,6 +1,7 @@
 package tfg.quiz.objetoNegocio;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -35,6 +36,11 @@ public class Pregunta {
 		orphanRemoval = true
 	)
 	private List<Opcion> opciones;
+	
+	@OneToMany(mappedBy = "pregunta",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true)
+	private Set<Respuesta> respuestas;
 
 	public int getId() {
 		return id;
@@ -66,5 +72,13 @@ public class Pregunta {
 
 	public void setOpciones(List<Opcion> opciones) {
 		this.opciones = opciones;
+	}
+	
+	public Set<Respuesta> getRespuestas() {
+		return respuestas;
+	}
+
+	public void setRespuestas(Set<Respuesta> respuestas) {
+		this.respuestas = respuestas;
 	}
 }

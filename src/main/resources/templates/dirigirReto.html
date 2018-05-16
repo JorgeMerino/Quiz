@@ -43,7 +43,7 @@
     			<h3 th:text="${pregunta.cuestion}"></h3>
     			<div class="row">
     			  <div class="col-6">
-	    			<div class="card text-white bg-primary mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[0].id}, ${pregunta.opciones[0].correcta} )|">
+	    			<div class="card text-white bg-primary mb-3 col-12">
 					  <div class="card-header">A</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[0].respuesta}"></h4>
@@ -51,7 +51,7 @@
 					</div>
 				  </div>
 				  <div class="col-6">
-					<div class="card text-white bg-success mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[1].id}, ${pregunta.opciones[1].correcta} )|">
+					<div class="card text-white bg-success mb-3 col-12">
 					  <div class="card-header">B</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[1].respuesta}"></h4>
@@ -59,7 +59,7 @@
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 2}">
-					<div class="card text-white bg-danger mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[2].id}, ${pregunta.opciones[2].correcta} )|">
+					<div class="card text-white bg-danger mb-3 col-12">
 					  <div class="card-header">C</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[2].respuesta}"></h4>
@@ -67,7 +67,7 @@
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 3}">
-					<div class="card text-white bg-warning mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[3].id}, ${pregunta.opciones[3].correcta}, ${pregunta.id} )|">
+					<div class="card text-white bg-warning mb-3 col-12">
 					  <div class="card-header">D</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[3].respuesta}"></h4>
@@ -75,6 +75,10 @@
 					</div>
 				  </div>
 				</div>
+				<form class="formulario-oculto" action="/continuar-reto" method="POST">
+					<input type="hidden" name="idReto" th:value="${reto.id}" />
+					<button onclick="this.parentNode.submit()">Siguiente Pregunta</button>
+				</form>
     		</div>
     	</div>
 	</div>    
@@ -94,65 +98,28 @@
     	var intervalo;
     	var respuestasCorrectas;
     	var numPreguntas;
-    	var obtenerPreguntaActualListener;
-    	var idPregunta = -1;
     	
     	function iniciarReto(idPreguntaLocal, numPreguntasLocal, tiempoPreguntaLocal){
+    		idPregunta = idPreguntaLocal;
     		numPreguntas = numPreguntasLocal;
     		tiempoPregunta = tiempoPreguntaLocal * 1000;
     		reiniciarCronometro();
     		respuestasCorrectas = 0;
     		document.getElementById("aciertos").innerHTML = "Aciertos: " + respuestasCorrectas + " de " + numPreguntas;
-    		obtenerPreguntaActualListener = setInterval(function(){
-    			$.ajax({
-    	  			type: "GET",
-    	  			url: "obtener-siguiente-pregunta",
-    	  			dataType: "text",
-    	  			success: function(respuesta){
-    	  				if(idPregunta !== respuesta){
-    	  					$("#" + idPregunta).css({"display": "none"});
-    	  					idPregunta = respuesta
-    	  					$("#" + idPregunta).css({"display": "block"});
-    	  				}
-    	  			}
-    	  		});
-    		}, 800);
+    		$.ajax({
+	  			type: "POST",
+	  			url: "siguiente-pregunta",
+	  			dataType: "text",
+	  			data: {"idPregunta": idPregunta}
+	  		});
     	}
-    	
-	    function respuesta(idOpcionElegida, correcta) {
-    		enviarResultados(idOpcionElegida, tiempoPregunta - tiempoActual);
-    		pararCronometro();
-	    	
-	    	if(correcta){
-	    		respuestasCorrectas++;	    		
-	    		$("#mensajeAcierto").css({"display": "block"});
-	    	}
-	    	else{
-	    		$("#mensajeError").css({"display": "block"});
-	    	}
-	    	document.getElementById("aciertos").innerHTML = "Aciertos: " + respuestasCorrectas + " de " + numPreguntas;
-	    	$("#" + idPregunta).css({"display": "none"});
-	    	
-
-			$("#mensajeAcierto").css({"display": "none"});
-   			$("#mensajeError").css({"display": "none"});	   			
-    		if($(idPregunta != -1)){	    			
-    			$("#" + idPregunta).css({"display": "block"});
-    			reiniciarCronometro();
-	    	}
-	    	else{
-	    		$("#mensajeFin").css({"display": "block"});
-	    	}
-	    }
 	    
 	    function reiniciarCronometro() {
 	    	$("#cronometro").css({"display": "block"});
 	    	clearInterval(intervalo);
 	    	tiempoInicio = new Date().getTime() + tiempoPregunta;
     		tiempoActual = 0;
-    		intervalo = setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos
-    		
-    		
+    		intervalo = setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos    	
 	    }
 	    
 	    function pararCronometro() {
@@ -169,26 +136,25 @@
 	    	}
 	    	else{
 	    		document.getElementById("cronometro").innerHTML = 0;
-	    		respuesta(null, false);	    		
+	    		$("#" + idPregunta).css({"display": "none"});
+	    		if($("#" + idPregunta).next().is("div")){
+		    		idPregunta = $("#" + idPregunta).next().attr("id");
+	    		}
+	    		else{
+	    			idPregunta = -1;
+	    		}
+		    		$.ajax({
+			  			type: "POST",
+			  			url: "siguiente-pregunta",
+			  			dataType: "text",
+			  			data: {"idPregunta": idPregunta}
+			  		});
+		    		
+		    		
+		    		$("#" + idPregunta).css({"display": "block"});
+		    		reiniciarCronometro();
 	    	}	    	
-	    }
-	   
-	    function enviarResultados(idOpcionElegida, tiempoActual) {		    	
-	    	$.ajax({
-	  			type: "POST",
-	  			url: "guardar-respuesta",
-	  			dataType: "text",
-	  			data: {"idOpcionElegida": idOpcionElegida,
-	  				"idPregunta": idPregunta,
-	  				"tiempoTotal": tiempoActual,
-	  				"idUsuario": $.cookie("idUsuario")
-	  			}
-	  		});
-	    	
-	    	pararCronometro();
-	    }
-	    
-    </script>
-    
+	    }	    
+    </script>    
   </body>
 </html>

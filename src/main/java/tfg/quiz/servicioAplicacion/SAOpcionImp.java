@@ -16,4 +16,9 @@ public class SAOpcionImp implements SAOpcion{
 		repositorioOpcion.save(opcion);
 	}
 
+	@Override
+	public Opcion buscar(int id) {
+		return repositorioOpcion.findById(id);
+	}
+
 }

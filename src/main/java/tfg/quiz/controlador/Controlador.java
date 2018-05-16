@@ -9,6 +9,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
@@ -25,10 +27,12 @@ import com.google.gson.Gson;
 import tfg.quiz.dto.DTOReto;
 import tfg.quiz.objetoNegocio.Opcion;
 import tfg.quiz.objetoNegocio.Pregunta;
+import tfg.quiz.objetoNegocio.Respuesta;
 import tfg.quiz.objetoNegocio.Reto;
 import tfg.quiz.objetoNegocio.Usuario;
 import tfg.quiz.servicioAplicacion.SAOpcion;
 import tfg.quiz.servicioAplicacion.SAPregunta;
+import tfg.quiz.servicioAplicacion.SARespuesta;
 import tfg.quiz.servicioAplicacion.SAReto;
 import tfg.quiz.servicioAplicacion.SAUsuario;
 
@@ -40,6 +44,8 @@ public class Controlador {
 	private SAPregunta saPregunta;
 	@Autowired
 	private SAOpcion saOpcion;
+	@Autowired
+	private SARespuesta saRespuesta;
 	@Autowired
 	private SAUsuario saUsuario;
 	
@@ -141,11 +147,11 @@ public class Controlador {
 	
 	@RequestMapping(value="/reto/{idReto}/insertar-nick", method = RequestMethod.GET)
 	public ModelAndView mostrarInsertarNick(@PathVariable("idReto") int idReto,
-			int idAlumno) {
+			int idUsuario) {
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
 		modelAndView.addObject("dtoReto", reto);
-		modelAndView.addObject("idUsuario", idAlumno);
+		modelAndView.addObject("idUsuario", idUsuario);
 		modelAndView.setViewName("index");
 		return modelAndView;
 	}
@@ -156,7 +162,7 @@ public class Controlador {
 			HttpServletResponse response) {
 		Reto reto = saReto.buscar(idReto);
 		Usuario usuario = new Usuario();
-		usuario.setId(Integer.parseInt(parametros.get("idUsuario")));
+		//usuario.setId(Integer.parseInt(parametros.get("idUsuario")));
 		usuario.setNick(parametros.get("nickUsuario"));
 		saUsuario.crear(usuario);
 		response.addCookie(new Cookie("idUsuario", Integer.toString(usuario.getId())));
@@ -175,12 +181,51 @@ public class Controlador {
 	
 	@RequestMapping(value="/reto/{idReto}/resolver", method = RequestMethod.GET)
 	public ModelAndView resolverReto(@PathVariable("idReto") int idReto,
-			@ModelAttribute("usuario") int usuario ) {
+			@ModelAttribute("usuario") Usuario usuario ) {
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
-		//crear usuario
-		modelAndView.setViewName("redirect:/reto/" + reto.getId());
+		modelAndView.addObject("reto", reto);
+		modelAndView.addObject("usuario", usuario);
+		modelAndView.setViewName("resolverReto");
 		return modelAndView;
+	}
+	
+	@RequestMapping(value="/reto/{idReto}/dirigir-reto", method = RequestMethod.GET)
+	public ModelAndView dirigirReto(@PathVariable("idReto") int idReto) {
+		ModelAndView modelAndView = new ModelAndView();
+		Reto reto = saReto.buscar(idReto);
+		modelAndView.addObject("reto", reto);
+		modelAndView.setViewName("dirigirReto");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/reto/{idReto}/guardar-respuesta", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void guardarRespuesta(@PathVariable("idReto") int idReto,
+			Integer idOpcionElegida, int idPregunta, int tiempoTotal, int idUsuario) {
+		Usuario usuario = saUsuario.buscar(idUsuario);
+		Pregunta pregunta =saPregunta.buscar(idPregunta);
+		Respuesta respuesta = new Respuesta(usuario, pregunta);
+		respuesta.setIdOpcionMarcada(idOpcionElegida);
+		respuesta.setPregunta(pregunta);
+		respuesta.setTiempo(tiempoTotal);
+		respuesta.setUsuario(usuario);
+		saRespuesta.crear(respuesta);
+	}
+	
+	@RequestMapping(value="/reto/{idReto}/siguiente-pregunta", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void siguientePregunta(@PathVariable("idReto") int idReto, int idPregunta) {
+		Reto reto = saReto.buscar(idReto);
+		reto.setSiguientePregunta(idPregunta);
+		saReto.crear(reto);
+	}
+	
+	@RequestMapping(value="/reto/{idReto}/obtener-siguiente-pregunta", method = RequestMethod.GET)
+	@ResponseBody
+	public int obtenerSiguientePregunta(@PathVariable("idReto") int idReto) {
+		Reto reto = saReto.buscar(idReto);
+		return reto.getSiguientePregunta();
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/obtener-participantes", method = RequestMethod.GET)

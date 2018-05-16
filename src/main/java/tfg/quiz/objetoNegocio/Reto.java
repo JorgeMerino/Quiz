@@ -34,6 +34,8 @@ public class Reto {
 	)
 	private List<Pregunta> preguntas;
 	
+	private int siguientePregunta;
+	
 	public Reto() {
 		this.disponible = false;
 		this.preguntas = new ArrayList<Pregunta>();
@@ -83,5 +85,13 @@ public class Reto {
 
 	public void setPreguntas(List<Pregunta> preguntas) {
 		this.preguntas = preguntas;
+	}
+
+	public int getSiguientePregunta() {
+		return siguientePregunta;
+	}
+
+	public void setSiguientePregunta(int siguientePregunta) {
+		this.siguientePregunta = siguientePregunta;
 	}
 }

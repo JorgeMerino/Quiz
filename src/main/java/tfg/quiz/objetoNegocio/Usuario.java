@@ -1,9 +1,13 @@
 package tfg.quiz.objetoNegocio;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -16,6 +20,11 @@ public class Usuario {
 	private String nick;
 	
 	private Rol rol;
+	
+	@OneToMany(mappedBy = "usuario",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true)
+	private Set<Respuesta> respuestas;
 
 	public int getId() {
 		return id;
@@ -39,5 +48,13 @@ public class Usuario {
 
 	public void setRol(Rol rol) {
 		this.rol = rol;
+	}
+
+	public Set<Respuesta> getRespuestas() {
+		return respuestas;
+	}
+
+	public void setRespuestas(Set<Respuesta> respuestas) {
+		this.respuestas = respuestas;
 	}
 }

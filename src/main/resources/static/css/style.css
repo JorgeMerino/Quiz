@@ -85,8 +85,21 @@ h1.grande{
 }
 
 .mensajeFin{
-	display: none;
 	margin: 7%;
+}
+
+.mensajeAcierto{
+	margin: 7%;
+	color: #00C853;
+}
+
+.mensajeError{
+	margin: 7%;
+	color: #F44336;
+}
+
+.mensajeError i, .mensajeAcierto i{
+	font-size: 4em;
 }
 
 input.input-crear-reto[type="text"] {
