@@ -16,17 +16,14 @@
 	
     <title>Quiz</title>
   </head>
-  <body th:onload="|iniciarReto(${reto.preguntas[0].id}, ${#lists.size(reto.preguntas)}, 10)|">
+  <body th:onload="|iniciarReto(${reto.preguntas[0].id}, ${#lists.size(reto.preguntas)})|">
     <div class="container">
     	<div class="contenedorReto">
     		<h1 th:text="${reto.nombre}"></h1>
     		<div class="row" id="resultado">
     			<div class="col-6">
     				<div class="cronometro" id="cronometro"></div>
-    			</div>
-    			<div class="col-6" style="text-align: right">
-    				<h3 class="aciertos" id="aciertos">Aciertos: 0</h3>
-    			</div>    			
+    			</div>  			
     		</div>
     		<div class="mensajeAcierto" id="mensajeAcierto" style="display: none;">
     			<h1><i class="material-icons">check_circle_outline</i></h1>
@@ -75,11 +72,12 @@
 					</div>
 				  </div>
 				</div>
-				<form class="formulario-oculto" action="/continuar-reto" method="POST">
-					<input type="hidden" name="idReto" th:value="${reto.id}" />
-					<button onclick="this.parentNode.submit()">Siguiente Pregunta</button>
-				</form>
     		</div>
+    		<button class="btn btn-primary btn-lg" id="botonSiguientePregunta" onclick="finalizarPregunta()">Siguiente Pregunta</button>
+			<div id="fin">
+				<h2>¡Enhorabuena! El reto ha finalizado</h2>
+				<a href="sala-de-espera">Volver a la sala de espera</a>
+			</div>
     	</div>
 	</div>    
 
@@ -91,70 +89,77 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     
     <script>
-    	var tiempoPregunta;
-    	var tiempoInicio;
-    	var tiempoActual;
-    	var tiempoFin;
-    	var intervalo;
-    	var respuestasCorrectas;
-    	var numPreguntas;
-    	
-    	function iniciarReto(idPreguntaLocal, numPreguntasLocal, tiempoPreguntaLocal){
-    		idPregunta = idPreguntaLocal;
-    		numPreguntas = numPreguntasLocal;
-    		tiempoPregunta = tiempoPreguntaLocal * 1000;
-    		reiniciarCronometro();
+	    var respuestasCorrectas;
+		var numPreguntas;
+		var idPregunta;
+		var tiempoInicio;
+		var tiempoActual;
+		var tiempoPregunta;
+		var intervaloCronometro;
+    
+    	function iniciarReto(idPreguntaLocal, numPreguntasLocal){
     		respuestasCorrectas = 0;
-    		document.getElementById("aciertos").innerHTML = "Aciertos: " + respuestasCorrectas + " de " + numPreguntas;
+    		numPreguntas = numPreguntasLocal;
+    		idPregunta = idPreguntaLocal;
+    		tiempoPregunta = 10 * 1000;
+    		iniciarCronometro();
+    		$("#botonSiguientePregunta").css({"display": "none"});
+    		$("#fin").css({"display": "none"});
+    	}
+    	
+    	function finalizarPregunta(){
+    		pararCronometro();
+    		if($("#" + idPregunta).next().is('div')){
+    			idPregunta = $("#" + idPregunta).next().attr( "id" );
+    			console.log(idPregunta);
+    		}
+    		else{
+    			idPregunta = null;
+    			$("#cronometro").css({"display": "none"});
+    			$("#fin").css({"display": "block"});
+    			$("#botonSiguientePregunta").css({"display": "none"});
+    		}
+    		    		
     		$.ajax({
 	  			type: "POST",
 	  			url: "siguiente-pregunta",
 	  			dataType: "text",
 	  			data: {"idPregunta": idPregunta}
 	  		});
-    	}
-	    
-	    function reiniciarCronometro() {
-	    	$("#cronometro").css({"display": "block"});
-	    	clearInterval(intervalo);
-	    	tiempoInicio = new Date().getTime() + tiempoPregunta;
-    		tiempoActual = 0;
-    		intervalo = setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos    	
-	    }
-	    
-	    function pararCronometro() {
-	    	$("#cronometro").css({"display": "none"});
-	    	clearInterval(intervalo);
-	    	tiempoInicio = 0;
-    		tiempoActual = 0; 	
-	    }
+    		
+    		if(idPregunta != null){
+    			iniciarCronometro();
+        		$("#botonSiguientePregunta").css({"display": "none"});
+        		$("#" + idPregunta).css({"display": "block"});
+    		}    		
+    	}    	
 	    
 	    function cronometro() {
 	    	tiempoActual = tiempoInicio - new Date().getTime();
 	    	if(tiempoActual > 0){
-	    		document.getElementById("cronometro").innerHTML = Math.trunc(tiempoActual/1000);
+	    		document.getElementById("cronometro").innerHTML = Math.trunc(tiempoActual/1000);	    		
 	    	}
 	    	else{
 	    		document.getElementById("cronometro").innerHTML = 0;
 	    		$("#" + idPregunta).css({"display": "none"});
-	    		if($("#" + idPregunta).next().is("div")){
-		    		idPregunta = $("#" + idPregunta).next().attr("id");
-	    		}
-	    		else{
-	    			idPregunta = -1;
-	    		}
-		    		$.ajax({
-			  			type: "POST",
-			  			url: "siguiente-pregunta",
-			  			dataType: "text",
-			  			data: {"idPregunta": idPregunta}
-			  		});
-		    		
-		    		
-		    		$("#" + idPregunta).css({"display": "block"});
-		    		reiniciarCronometro();
+	    		$("#botonSiguientePregunta").css({"display": "block"});	    		
 	    	}	    	
-	    }	    
+	    }
+	    
+	    function iniciarCronometro() {
+	    	$("#cronometro").css({"display": "block"});
+	    	clearInterval(intervaloCronometro);
+	    	tiempoInicio = new Date().getTime() + tiempoPregunta;
+    		tiempoActual = 0;
+    		intervaloCronometro = setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos    		
+	    }
+	    
+	    function pararCronometro() {
+	    	$("#cronometro").css({"display": "none"});
+	    	clearInterval(intervaloCronometro);
+	    	tiempoInicio = 0;
+    		tiempoActual = 0; 	
+	    }
     </script>    
   </body>
 </html>

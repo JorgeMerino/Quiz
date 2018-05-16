@@ -34,17 +34,19 @@ public class Reto {
 	)
 	private List<Pregunta> preguntas;
 	
-	private int siguientePregunta;
+	private Integer idPreguntaActual;
 	
 	public Reto() {
 		this.disponible = false;
 		this.preguntas = new ArrayList<Pregunta>();
+		this.idPreguntaActual = null;
 	}
 	
 	public Reto(String nombre) {
 		this.nombre = nombre;
 		this.disponible = false;
 		this.preguntas = new ArrayList<Pregunta>();
+		this.idPreguntaActual = null;
 	}
 	
 	public static Reto toObjetoNegocio(DTOReto dtoReto) {
@@ -87,11 +89,11 @@ public class Reto {
 		this.preguntas = preguntas;
 	}
 
-	public int getSiguientePregunta() {
-		return siguientePregunta;
+	public Integer getIdPreguntaActual() {
+		return idPreguntaActual;
 	}
 
-	public void setSiguientePregunta(int siguientePregunta) {
-		this.siguientePregunta = siguientePregunta;
+	public void setIdPreguntaActual(Integer idPreguntaActual) {
+		this.idPreguntaActual = idPreguntaActual;
 	}
 }

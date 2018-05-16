@@ -23,7 +23,7 @@
     		<h3>Participantes</h3>
 	    	<div class="row participantes">
 	    	</div>
-	    	<form id="comenzarReto" action="comenzar-reto" method="POST">
+	    	<form id="comenzarReto" action="comenzar-reto" th:if="${usuario == null}" method="POST">
 				<button class="btn btn-azul btn-lg" onclick="this.parentNode.submit()">Comenzar Reto</button>
 			</form>
 			
@@ -35,10 +35,25 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-  
+  	
+  	<script th:if="${usuario != null}">
+  		setInterval(function(){
+  			$.ajax({
+  				type: "GET",
+  				url: "obtener-pregunta-actual",
+  				dataType: "text",
+  				success: function(idPreguntaActual){
+  					if(idPreguntaActual != "null"){
+  						$(location).attr('href', "resolver");
+  					}
+  				}
+  			});
+  		}, 1000);
+  	</script>
+  	
   	<script>
 	  	$(document).ready(function(){
-	  		setInterval(obtenerParticipantes, 2000);
+	  		setInterval(obtenerParticipantes, 1000);
 	  		
 	  		function obtenerParticipantes() {
 		  		$.ajax({

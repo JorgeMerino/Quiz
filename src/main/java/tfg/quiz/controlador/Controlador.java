@@ -175,6 +175,7 @@ public class Controlador {
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
 		modelAndView.addObject("dtoReto", reto);
+		modelAndView.addObject("usuario", usuario);
 		modelAndView.setViewName("salaEspera");
 		return modelAndView;
 	}
@@ -199,6 +200,15 @@ public class Controlador {
 		return modelAndView;
 	}
 	
+	@RequestMapping(value="/reto/{idReto}/comenzar-reto", method = RequestMethod.POST)
+	public ModelAndView comenzarReto(@PathVariable("idReto") int idReto) {
+		Reto reto = saReto.buscar(idReto);
+		Integer idPreguntaActual = reto.getPreguntas().get(0).getId();
+		reto.setIdPreguntaActual(idPreguntaActual);
+		saReto.crear(reto);
+		return new ModelAndView("redirect:/reto/" + reto.getId() + "/dirigir-reto");
+	}
+	
 	@RequestMapping(value="/reto/{idReto}/guardar-respuesta", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public void guardarRespuesta(@PathVariable("idReto") int idReto,
@@ -215,23 +225,22 @@ public class Controlador {
 	
 	@RequestMapping(value="/reto/{idReto}/siguiente-pregunta", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public void siguientePregunta(@PathVariable("idReto") int idReto, int idPregunta) {
+	public void guardarPreguntaActual(@PathVariable("idReto") int idReto, Integer idPregunta) {
 		Reto reto = saReto.buscar(idReto);
-		reto.setSiguientePregunta(idPregunta);
+		reto.setIdPreguntaActual(idPregunta);
 		saReto.crear(reto);
 	}
 	
-	@RequestMapping(value="/reto/{idReto}/obtener-siguiente-pregunta", method = RequestMethod.GET)
+	@RequestMapping(value="/reto/{idReto}/obtener-pregunta-actual", method = RequestMethod.GET)
 	@ResponseBody
-	public int obtenerSiguientePregunta(@PathVariable("idReto") int idReto) {
+	public String obtenerPreguntaActual(@PathVariable("idReto") int idReto) {
 		Reto reto = saReto.buscar(idReto);
-		return reto.getSiguientePregunta();
+		return reto.getIdPreguntaActual() == null ? "null" : reto.getIdPreguntaActual().toString();
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/obtener-participantes", method = RequestMethod.GET)
 	@ResponseBody
 	public String obtenerParticipantes(@PathVariable("idReto") int idReto) {
-		List<Usuario> participantes = saUsuario.buscarParticipantes();
 		Gson gson = new Gson();
 		return gson.toJson(saUsuario.buscarParticipantes());
 	}

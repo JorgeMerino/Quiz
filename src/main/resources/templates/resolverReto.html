@@ -16,14 +16,11 @@
 	
     <title>Quiz</title>
   </head>
-  <body th:onload="|iniciarReto(${reto.preguntas[0].id}, ${#lists.size(reto.preguntas)}, 10)|">
+  <body th:onload="|iniciarReto(${#lists.size(reto.preguntas)})|">
     <div class="container">
     	<div class="contenedorReto">
     		<h1 th:text="${reto.nombre}"></h1>
     		<div class="row" id="resultado">
-    			<div class="col-6">
-    				<div class="cronometro" id="cronometro"></div>
-    			</div>
     			<div class="col-6" style="text-align: right">
     				<h3 class="aciertos" id="aciertos">Aciertos: 0</h3>
     			</div>    			
@@ -40,37 +37,36 @@
     			<h2>¡Enhorabuena, has terminado este reto!</h2> 				
     		</div>
     		<div th:each="pregunta, iteradorPregunta : ${reto.preguntas}" th:id="${pregunta.id}" th:style="${iteradorPregunta.index==0} ? 'display:inline;' : 'display:none;'">
-    			<h3 th:text="${pregunta.cuestion}"></h3>
     			<div class="row">
     			  <div class="col-6">
 	    			<div class="card text-white bg-primary mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[0].id}, ${pregunta.opciones[0].correcta} )|">
-					  <div class="card-header">A</div>
+					  <div class="card-header"></div>
 					  <div class="card-body">
-					    <h4 class="card-title" th:text="${pregunta.opciones[0].respuesta}"></h4>
+					    <h1 class="card-title">A</h1>
 					  </div>
 					</div>
 				  </div>
 				  <div class="col-6">
 					<div class="card text-white bg-success mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[1].id}, ${pregunta.opciones[1].correcta} )|">
-					  <div class="card-header">B</div>
+					  <div class="card-header"></div>
 					  <div class="card-body">
-					    <h4 class="card-title" th:text="${pregunta.opciones[1].respuesta}"></h4>
+					    <h1 class="card-title">C</h1>
 					  </div>
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 2}">
 					<div class="card text-white bg-danger mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[2].id}, ${pregunta.opciones[2].correcta} )|">
-					  <div class="card-header">C</div>
+					  <div class="card-header"></div>
 					  <div class="card-body">
-					    <h4 class="card-title" th:text="${pregunta.opciones[2].respuesta}"></h4>
+					    <h1 class="card-title">B</h1>
 					  </div>
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 3}">
 					<div class="card text-white bg-warning mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[3].id}, ${pregunta.opciones[3].correcta}, ${pregunta.id} )|">
-					  <div class="card-header">D</div>
+					  <div class="card-header"></div>
 					  <div class="card-body">
-					    <h4 class="card-title" th:text="${pregunta.opciones[3].respuesta}"></h4>
+					    <h1 class="card-title">D</h1>
 					  </div>
 					</div>
 				  </div>
@@ -87,42 +83,47 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     
     <script>
-    	var tiempoPregunta;
+    	var respuestasCorrectas = 0;
+    	var numPreguntas;
+    	var idPregunta = null;
     	var tiempoInicio;
     	var tiempoActual;
-    	var tiempoFin;
-    	var intervalo;
-    	var respuestasCorrectas;
-    	var numPreguntas;
-    	var obtenerPreguntaActualListener;
-    	var idPregunta = -1;
+    	var tiempoPregunta = 10 * 1000;
+    	var intervaloCronometro;
+    
+    	setInterval(function(){
+			$.ajax({
+				type: "GET",
+				url: "obtener-pregunta-actual",
+				dataType: "text",
+				success: function(idPreguntaActual){
+					if(idPregunta != "null" && idPreguntaActual == "null"){
+						window.location.href = "sala-de-espera";
+					}
+					else if(idPregunta != idPreguntaActual){
+						pararCronometro();
+						$("#mensajeAcierto").css({"display": "none"});
+			   			$("#mensajeError").css({"display": "none"});
+			   			
+						$("#" + idPregunta).css({"display": "none"});
+	  					idPregunta = idPreguntaActual;
+	  					$("#" + idPregunta).css({"display": "block"});
+	  					iniciarCronometro();
+					}					
+				}
+			});
+		}, 1000);
     	
-    	function iniciarReto(idPreguntaLocal, numPreguntasLocal, tiempoPreguntaLocal){
-    		numPreguntas = numPreguntasLocal;
-    		tiempoPregunta = tiempoPreguntaLocal * 1000;
-    		reiniciarCronometro();
-    		respuestasCorrectas = 0;
+    	function iniciarReto(numPreguntasLocal){
+    		numPreguntas = numPreguntasLocal;  		
     		document.getElementById("aciertos").innerHTML = "Aciertos: " + respuestasCorrectas + " de " + numPreguntas;
-    		obtenerPreguntaActualListener = setInterval(function(){
-    			$.ajax({
-    	  			type: "GET",
-    	  			url: "obtener-siguiente-pregunta",
-    	  			dataType: "text",
-    	  			success: function(respuesta){
-    	  				if(idPregunta !== respuesta){
-    	  					$("#" + idPregunta).css({"display": "none"});
-    	  					idPregunta = respuesta
-    	  					$("#" + idPregunta).css({"display": "block"});
-    	  				}
-    	  			}
-    	  		});
-    		}, 800);
     	}
     	
-	    function respuesta(idOpcionElegida, correcta) {
-    		enviarResultados(idOpcionElegida, tiempoPregunta - tiempoActual);
+    	function respuesta(idOpcionElegida, correcta) {
+    		enviarResultados(idOpcionElegida, tiempoActual - tiempoInicio);
     		pararCronometro();
-	    	
+    		$("#" + idPregunta).css({"display": "none"});
+    		
 	    	if(correcta){
 	    		respuestasCorrectas++;	    		
 	    		$("#mensajeAcierto").css({"display": "block"});
@@ -130,50 +131,11 @@
 	    	else{
 	    		$("#mensajeError").css({"display": "block"});
 	    	}
-	    	document.getElementById("aciertos").innerHTML = "Aciertos: " + respuestasCorrectas + " de " + numPreguntas;
-	    	$("#" + idPregunta).css({"display": "none"});
 	    	
-
-			$("#mensajeAcierto").css({"display": "none"});
-   			$("#mensajeError").css({"display": "none"});	   			
-    		if($(idPregunta != -1)){	    			
-    			$("#" + idPregunta).css({"display": "block"});
-    			reiniciarCronometro();
-	    	}
-	    	else{
-	    		$("#mensajeFin").css({"display": "block"});
-	    	}
+	    	document.getElementById("aciertos").innerHTML = "Aciertos: " + respuestasCorrectas + " de " + numPreguntas;
 	    }
-	    
-	    function reiniciarCronometro() {
-	    	$("#cronometro").css({"display": "block"});
-	    	clearInterval(intervalo);
-	    	tiempoInicio = new Date().getTime() + tiempoPregunta;
-    		tiempoActual = 0;
-    		intervalo = setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos
-    		
-    		
-	    }
-	    
-	    function pararCronometro() {
-	    	$("#cronometro").css({"display": "none"});
-	    	clearInterval(intervalo);
-	    	tiempoInicio = 0;
-    		tiempoActual = 0; 	
-	    }
-	    
-	    function cronometro() {
-	    	tiempoActual = tiempoInicio - new Date().getTime();
-	    	if(tiempoActual > 0){
-	    		document.getElementById("cronometro").innerHTML = Math.trunc(tiempoActual/1000);
-	    	}
-	    	else{
-	    		document.getElementById("cronometro").innerHTML = 0;
-	    		respuesta(null, false);	    		
-	    	}	    	
-	    }
-	   
-	    function enviarResultados(idOpcionElegida, tiempoActual) {		    	
+    	
+    	function enviarResultados(idOpcionElegida, tiempoActual) {		    	
 	    	$.ajax({
 	  			type: "POST",
 	  			url: "guardar-respuesta",
@@ -184,10 +146,27 @@
 	  				"idUsuario": $.cookie("idUsuario")
 	  			}
 	  		});
-	    	
-	    	pararCronometro();
+	    }
+    	
+    	function cronometro() {
+	    	tiempoActual = tiempoInicio - new Date().getTime();
+	    	if(tiempoActual <= 0){
+	    		respuesta(null, false);	    		
+	    	}	    	
+	    }
+    	
+    	function iniciarCronometro() {
+	    	clearInterval(intervaloCronometro);
+	    	tiempoInicio = new Date().getTime() + tiempoPregunta;
+    		tiempoActual = 0;
+    		intervaloCronometro = setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos    		
 	    }
 	    
+	    function pararCronometro() {
+	    	clearInterval(intervaloCronometro);
+	    	tiempoInicio = 0;
+    		tiempoActual = 0; 	
+	    }
     </script>
     
   </body>

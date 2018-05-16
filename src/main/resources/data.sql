@@ -1,4 +1,4 @@
-INSERT INTO `retos` (`id`, `nombre`, `disponible`, `siguiente_pregunta`) VALUES (1, 'Prueba', 0, 1);
+INSERT INTO `retos` (`id`, `nombre`, `disponible`, `id_pregunta_actual`) VALUES (1, 'Prueba', 0, NULL);
 
 INSERT INTO `preguntas` (`id`, `cuestion`, `reto`) VALUES
 (1, 'Año del Descubrimiento de América', 1),
