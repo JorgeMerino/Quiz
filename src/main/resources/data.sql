@@ -15,10 +15,3 @@ INSERT INTO `opciones` (`id`, `correcta`, `respuesta`, `pregunta`) VALUES
 (7, 1, 'Filósofo', 2),
 (8, 1, 'Europa', 3),
 (9, 0, 'Oceanía', 3);
-
-INSERT INTO `usuarios` (`id`, `nick`, `rol`) VALUES
-(1, 'Jorge', 0),
-(2, 'Luis', 0),
-(3, 'Pepe', 0),
-(4, 'María', 0),
-(5, 'Ana', 0);

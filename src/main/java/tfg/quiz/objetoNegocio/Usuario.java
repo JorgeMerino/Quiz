@@ -1,5 +1,6 @@
 package tfg.quiz.objetoNegocio;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -25,6 +26,10 @@ public class Usuario {
 			cascade = CascadeType.ALL,
 			orphanRemoval = true)
 	private Set<Respuesta> respuestas;
+	
+	public Usuario() {
+		this.respuestas = new HashSet<Respuesta>();
+	}
 
 	public int getId() {
 		return id;

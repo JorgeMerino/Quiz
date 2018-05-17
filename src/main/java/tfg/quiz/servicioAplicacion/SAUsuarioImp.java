@@ -25,7 +25,11 @@ public class SAUsuarioImp implements SAUsuario{
 
 	@Override
 	public List<Usuario> buscarParticipantes() {
-		return repositorioUsuario.findAll();
+		List<Usuario> usuarios = repositorioUsuario.findAll();
+		for(int i = 0; i < usuarios.size(); i++) {
+			usuarios.get(i).setRespuestas(null);
+		}
+		
+		return usuarios;
 	}
-
 }

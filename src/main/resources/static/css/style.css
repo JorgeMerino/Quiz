@@ -130,3 +130,7 @@ a.borrarOpcion i{
 i.icono-rojo{
 	color: #F44336;
 }
+
+#botonSiguientePregunta{
+	margin: 20px auto;
+}

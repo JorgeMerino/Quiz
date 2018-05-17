@@ -20,10 +20,8 @@
     <div class="container">
     	<div class="contenedorReto">
     		<h1 th:text="${reto.nombre}"></h1>
-    		<div class="row" id="resultado">
-    			<div class="col-6" style="text-align: right">
-    				<h3 class="aciertos" id="aciertos">Aciertos: 0</h3>
-    			</div>    			
+    		<div style="text-align: right">
+    			<h3 class="aciertos" id="aciertos">Aciertos: 0</h3>  			
     		</div>
     		<div class="mensajeAcierto" id="mensajeAcierto" style="display: none;">
     			<h1><i class="material-icons">check_circle_outline</i></h1>
@@ -85,42 +83,62 @@
     <script>
     	var respuestasCorrectas = 0;
     	var numPreguntas;
-    	var idPregunta = null;
+    	var idPregunta;
     	var tiempoInicio;
     	var tiempoActual;
     	var tiempoPregunta = 10 * 1000;
-    	var intervaloCronometro;
-    
-    	setInterval(function(){
-			$.ajax({
-				type: "GET",
-				url: "obtener-pregunta-actual",
-				dataType: "text",
-				success: function(idPreguntaActual){
-					if(idPregunta != "null" && idPreguntaActual == "null"){
-						window.location.href = "sala-de-espera";
-					}
-					else if(idPregunta != idPreguntaActual){
-						pararCronometro();
-						$("#mensajeAcierto").css({"display": "none"});
-			   			$("#mensajeError").css({"display": "none"});
-			   			
-						$("#" + idPregunta).css({"display": "none"});
-	  					idPregunta = idPreguntaActual;
-	  					$("#" + idPregunta).css({"display": "block"});
-	  					iniciarCronometro();
-					}					
-				}
-			});
-		}, 1000);
+    	var intervaloCronometro;    	
     	
     	function iniciarReto(numPreguntasLocal){
     		numPreguntas = numPreguntasLocal;  		
     		document.getElementById("aciertos").innerHTML = "Aciertos: " + respuestasCorrectas + " de " + numPreguntas;
+    		
+    		//Obtenemos la pregunta actual, de forma síncrona para establecer qué pregunta es la que se nos mostrará primero
+    		$.ajax({
+    			type: "GET",
+				url: "obtener-pregunta-actual",
+				dataType: "text",
+				success: function(idPreguntaActual){
+					idPregunta = idPreguntaActual;
+					$("#" + idPregunta).css({"display": "block"});
+  					iniciarCronometro();
+    	        },
+    	        async: false
+    	    });
+    		
+    		//Hacemos una petición asíncrona, cada segundo, para que cambie automáticamente la pregunta
+    		setInterval(function(){
+    			$.ajax({
+    				type: "GET",
+    				url: "obtener-pregunta-actual",
+    				dataType: "text",
+    				success: function(idPreguntaActual){
+    					if(idPreguntaActual == "null"){
+    						idPreguntaActual = null;
+    					}    					
+    					
+    					//Si la siguiente es nula, se vuelve a la sala de espera
+    					if(idPregunta != null && idPreguntaActual == null){
+    						window.location.href = "sala-de-espera";
+    					}
+    					//Si no, actualiza la pregunta
+    					else if(idPregunta != idPreguntaActual){
+    						pararCronometro();
+    						$("#mensajeAcierto").css({"display": "none"});
+    			   			$("#mensajeError").css({"display": "none"});
+    			   			
+    						$("#" + idPregunta).css({"display": "none"});
+    	  					idPregunta = idPreguntaActual;
+    	  					$("#" + idPregunta).css({"display": "block"});
+    	  					iniciarCronometro();
+    					}					
+    				}
+    			});
+    		}, 1000);
     	}
     	
     	function respuesta(idOpcionElegida, correcta) {
-    		enviarResultados(idOpcionElegida, tiempoActual - tiempoInicio);
+    		enviarResultados(idOpcionElegida, tiempoPregunta - tiempoActual);
     		pararCronometro();
     		$("#" + idPregunta).css({"display": "none"});
     		
@@ -135,14 +153,14 @@
 	    	document.getElementById("aciertos").innerHTML = "Aciertos: " + respuestasCorrectas + " de " + numPreguntas;
 	    }
     	
-    	function enviarResultados(idOpcionElegida, tiempoActual) {		    	
+    	function enviarResultados(idOpcionElegida, tiempo) {		    	
 	    	$.ajax({
 	  			type: "POST",
 	  			url: "guardar-respuesta",
 	  			dataType: "text",
 	  			data: {"idOpcionElegida": idOpcionElegida,
 	  				"idPregunta": idPregunta,
-	  				"tiempoTotal": tiempoActual,
+	  				"tiempoTotal": tiempo,
 	  				"idUsuario": $.cookie("idUsuario")
 	  			}
 	  		});
@@ -150,13 +168,16 @@
     	
     	function cronometro() {
 	    	tiempoActual = tiempoInicio - new Date().getTime();
+	    	//Si el tiempo termina, se manda una respuesta incorrecta
 	    	if(tiempoActual <= 0){
+	    		tiempoActual = 0;
 	    		respuesta(null, false);	    		
 	    	}	    	
 	    }
     	
     	function iniciarCronometro() {
-	    	clearInterval(intervaloCronometro);
+	    	clearInterval(intervaloCronometro); //Limpiamos el iterador del cronómetro
+	    	//Y lo iniciamos de nuevo
 	    	tiempoInicio = new Date().getTime() + tiempoPregunta;
     		tiempoActual = 0;
     		intervaloCronometro = setInterval(cronometro, 200); //Invoca la función cronómetro cada 0.2 segundos    		
@@ -167,7 +188,6 @@
 	    	tiempoInicio = 0;
     		tiempoActual = 0; 	
 	    }
-    </script>
-    
+    </script>    
   </body>
 </html>
