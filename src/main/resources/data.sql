@@ -1,9 +1,9 @@
 INSERT INTO `retos` (`id`, `nombre`, `disponible`, `id_pregunta_actual`) VALUES (1, 'Prueba', 0, NULL);
 
-INSERT INTO `preguntas` (`id`, `cuestion`, `reto`) VALUES
-(1, 'Año del Descubrimiento de América', 1),
-(2, 'Descartes era...', 1),
-(3, 'Austria pertenece a...', 1);
+INSERT INTO `preguntas` (`id`, `cuestion`, `reto`, `tiempo_respuesta`) VALUES
+(1, 'Año del Descubrimiento de América', 1, 10),
+(2, 'Descartes era...', 1, 10),
+(3, 'Austria pertenece a...', 1, 15);
 
 INSERT INTO `opciones` (`id`, `correcta`, `respuesta`, `pregunta`) VALUES
 (1, 0, '1560', 1),

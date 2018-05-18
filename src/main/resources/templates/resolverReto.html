@@ -86,7 +86,7 @@
     	var idPregunta;
     	var tiempoInicio;
     	var tiempoActual;
-    	var tiempoPregunta = 10 * 1000;
+    	var tiempoPregunta;
     	var intervaloCronometro;    	
     	
     	function iniciarReto(numPreguntasLocal){
@@ -97,9 +97,10 @@
     		$.ajax({
     			type: "GET",
 				url: "obtener-pregunta-actual",
-				dataType: "text",
-				success: function(idPreguntaActual){
-					idPregunta = idPreguntaActual;
+				dataType: "json",
+  				success: function(respuesta){
+					idPregunta = respuesta.idPreguntaActual;
+					tiempoPregunta = respuesta.tiempoActual * 1000;
 					$("#" + idPregunta).css({"display": "block"});
   					iniciarCronometro();
     	        },
@@ -111,24 +112,25 @@
     			$.ajax({
     				type: "GET",
     				url: "obtener-pregunta-actual",
-    				dataType: "text",
-    				success: function(idPreguntaActual){
-    					if(idPreguntaActual == "null"){
-    						idPreguntaActual = null;
+    				dataType: "json",
+      				success: function(respuesta){
+    					if(respuesta.idPreguntaActual == "null"){
+    						respuesta.idPreguntaActual = null;
     					}    					
     					
     					//Si la siguiente es nula, se vuelve a la sala de espera
-    					if(idPregunta != null && idPreguntaActual == null){
+    					if(idPregunta != null && respuesta.idPreguntaActual == null){
     						window.location.href = "sala-de-espera";
     					}
     					//Si no, actualiza la pregunta
-    					else if(idPregunta != idPreguntaActual){
+    					else if(idPregunta != respuesta.idPreguntaActual){
     						pararCronometro();
     						$("#mensajeAcierto").css({"display": "none"});
     			   			$("#mensajeError").css({"display": "none"});
     			   			
     						$("#" + idPregunta).css({"display": "none"});
-    	  					idPregunta = idPreguntaActual;
+    	  					idPregunta = respuesta.idPreguntaActual;
+    	  					tiempoPregunta = respuesta.tiempoActual * 1000;
     	  					$("#" + idPregunta).css({"display": "block"});
     	  					iniciarCronometro();
     					}					

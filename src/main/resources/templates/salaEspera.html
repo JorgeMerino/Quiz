@@ -42,9 +42,9 @@
   			$.ajax({
   				type: "GET",
   				url: "obtener-pregunta-actual",
-  				dataType: "text",
-  				success: function(idPreguntaActual){
-  					if(idPreguntaActual != "null"){
+  				dataType: "json",
+  				success: function(respuesta){
+  					if(respuesta.idPreguntaActual != "null"){
   						$(location).attr('href', "resolver");
   					}
   				}
@@ -60,9 +60,8 @@
 		  		$.ajax({
 		  			type: "GET",
 		  			url: "obtener-participantes",
-		  			dataType: "text",
-		  			success: function(datos){
-		  				participantes = JSON.parse(datos);
+		  			dataType: "json",
+		  			success: function(participantes){
 		  				if(participantes.length == 0){
 		  					$("#sinParticipantes").css("display", "block");
 		  					$("#comenzarReto").css("display", "none");

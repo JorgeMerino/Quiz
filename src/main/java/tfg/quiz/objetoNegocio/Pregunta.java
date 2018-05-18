@@ -1,5 +1,7 @@
 package tfg.quiz.objetoNegocio;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +43,15 @@ public class Pregunta {
 			cascade = CascadeType.ALL,
 			orphanRemoval = true)
 	private Set<Respuesta> respuestas;
+	
+	private int tiempoRespuesta;
 
+	public Pregunta() {
+		this.opciones = new ArrayList<Opcion>();
+		this.respuestas = new HashSet<Respuesta>();
+		this.tiempoRespuesta = 20;
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -80,5 +90,13 @@ public class Pregunta {
 
 	public void setRespuestas(Set<Respuesta> respuestas) {
 		this.respuestas = respuestas;
+	}
+
+	public int getTiempoRespuesta() {
+		return tiempoRespuesta;
+	}
+
+	public void setTiempoRespuesta(int tiempoRespuesta) {
+		this.tiempoRespuesta = tiempoRespuesta;
 	}
 }

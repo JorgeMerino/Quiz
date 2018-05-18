@@ -16,7 +16,7 @@
 	
     <title>Quiz</title>
   </head>
-  <body th:onload="|iniciarReto(${reto.preguntas[0].id}, ${#lists.size(reto.preguntas)})|">
+  <body th:onload="|iniciarReto(${reto.preguntas[0].id}, ${#lists.size(reto.preguntas)}, ${reto.preguntas[0].tiempoRespuesta})|">
     <div class="container">
     	<div class="contenedorReto">
     		<h1 th:text="${reto.nombre}"></h1>
@@ -97,11 +97,11 @@
 		var tiempoPregunta;
 		var intervaloCronometro;
     
-    	function iniciarReto(idPreguntaLocal, numPreguntasLocal){
+    	function iniciarReto(idPreguntaLocal, numPreguntasLocal, tiempoPreguntaLocal){
     		respuestasCorrectas = 0;
     		numPreguntas = numPreguntasLocal;
     		idPregunta = idPreguntaLocal;
-    		tiempoPregunta = 10 * 1000;
+    		tiempoPregunta = tiempoPreguntaLocal * 1000;
     		iniciarCronometro();
     		$("#botonSiguientePregunta").css({"display": "none"});
     		$("#fin").css({"display": "none"});
@@ -111,7 +111,6 @@
     		pararCronometro();
     		if($("#" + idPregunta).next().is('div')){
     			idPregunta = $("#" + idPregunta).next().attr( "id" );
-    			console.log(idPregunta);
     		}
     		else{
     			idPregunta = null;
@@ -124,7 +123,11 @@
 	  			type: "POST",
 	  			url: "siguiente-pregunta",
 	  			dataType: "text",
-	  			data: {"idPregunta": idPregunta}
+	  			data: {"idPregunta": idPregunta},
+	  			success: function(tiempoActual){
+					tiempoPregunta = tiempoActual * 1000;
+    	        },
+    	        async: false
 	  		});
     		
     		if(idPregunta != null){

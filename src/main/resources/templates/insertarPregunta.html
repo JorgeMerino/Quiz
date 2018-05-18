@@ -53,6 +53,14 @@
 					</td>
 				</tr>
 			   </tbody>
+			   <tfoot>
+			   	<tr>
+			   		<td colspan="3">
+					   	<label for="tiempoRespuesta" th:text="'Tiempo de Respuesta: ' + ${pregunta.tiempoRespuesta} + ' segundos'"></label>
+						<input type="range" class="custom-range" min="10" max="30" step="5" th:value="${pregunta.tiempoRespuesta}" id="tiempoRespuesta" name="tiempoRespuesta"/>
+					</td>
+				</tr>
+			   </tfoot>
 			  </table>
 			</form>
 			<button type="button" class="btn btn-azul btn-lg insertarOpcion">
@@ -90,7 +98,11 @@
 	  		$('tbody').on( "click", "tr td a.borrarOpcion", function() {
 	  			$(this).closest("tr").remove();
 	  			comprobarBotones();
-	  		}); 		
+	  		});
+	  		
+	  		$("#tiempoRespuesta").change(function(){
+	  			$(this).prev("label").text("Tiempo de Respuesta: " + $(this).val() + " segundos");
+	  		})
 	  		
 	  		
 	  		function insertarFilaOpcion(){

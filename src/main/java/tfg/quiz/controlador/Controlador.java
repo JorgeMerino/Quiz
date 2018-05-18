@@ -83,6 +83,7 @@ public class Controlador {
 		Reto reto = saReto.buscar(idReto);
 		List<Opcion> opciones = new ArrayList<Opcion>();
 		Pregunta pregunta = saPregunta.buscar(Integer.parseInt(parametros.get("idPregunta")));
+				
 		//Si existe en la base de datos:
 		if(pregunta != null) {
 			//Limpiamos las opciones antiguas:
@@ -94,6 +95,7 @@ public class Controlador {
 		}
 		
 		pregunta.setCuestion(parametros.get("nombrePregunta"));
+		pregunta.setTiempoRespuesta(Integer.parseInt(parametros.get("tiempoRespuesta")));
 		pregunta.setReto(reto);		
 		saPregunta.crear(pregunta);
 		
@@ -223,18 +225,30 @@ public class Controlador {
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/siguiente-pregunta", method = RequestMethod.POST)
-	@ResponseStatus(value = HttpStatus.OK)
-	public void guardarPreguntaActual(@PathVariable("idReto") int idReto, Integer idPregunta) {
+	@ResponseBody
+	public String guardarPreguntaActual(@PathVariable("idReto") int idReto, Integer idPregunta) {
 		Reto reto = saReto.buscar(idReto);
 		reto.setIdPreguntaActual(idPregunta);
 		saReto.crear(reto);
+		
+		return Integer.toString(saPregunta.buscar(reto.getIdPreguntaActual()).getTiempoRespuesta());
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/obtener-pregunta-actual", method = RequestMethod.GET)
 	@ResponseBody
 	public String obtenerPreguntaActual(@PathVariable("idReto") int idReto) {
 		Reto reto = saReto.buscar(idReto);
-		return reto.getIdPreguntaActual() == null ? "null" : reto.getIdPreguntaActual().toString();
+		Integer tiempoActual, idPreguntaActual = reto.getIdPreguntaActual();
+		
+		if(idPreguntaActual == null) {
+			tiempoActual = null;
+		}
+		else {
+			tiempoActual = saPregunta.buscar(reto.getIdPreguntaActual()).getTiempoRespuesta();
+		}
+		
+		String respuesta = "{\"idPreguntaActual\": \"" + idPreguntaActual + "\", \"tiempoActual\": \"" + tiempoActual + "\"}";		
+		return respuesta;
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/obtener-participantes", method = RequestMethod.GET)
