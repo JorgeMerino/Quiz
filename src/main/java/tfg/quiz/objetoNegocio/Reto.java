@@ -1,13 +1,16 @@
 package tfg.quiz.objetoNegocio;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -34,11 +37,15 @@ public class Reto {
 	)
 	private List<Pregunta> preguntas;
 	
+	@ManyToMany(mappedBy = "retos")
+    private Set<Usuario> usuarios = new HashSet<>();
+	
 	private Integer idPreguntaActual;
 	
 	public Reto() {
 		this.disponible = false;
 		this.preguntas = new ArrayList<Pregunta>();
+		this.usuarios = new HashSet<>();
 		this.idPreguntaActual = null;
 	}
 	
@@ -46,6 +53,7 @@ public class Reto {
 		this.nombre = nombre;
 		this.disponible = false;
 		this.preguntas = new ArrayList<Pregunta>();
+		this.usuarios = new HashSet<>();
 		this.idPreguntaActual = null;
 	}
 	
@@ -54,6 +62,8 @@ public class Reto {
 		reto.setId(dtoReto.getId());
 		reto.setNombre(dtoReto.getNombre());
 		reto.setPreguntas(dtoReto.getPreguntas());
+		reto.setUsuarios(dtoReto.getUsuarios());
+		reto.setIdPreguntaActual(dtoReto.getIdPreguntaActual());
 		return reto;
 	}
 
@@ -87,6 +97,14 @@ public class Reto {
 
 	public void setPreguntas(List<Pregunta> preguntas) {
 		this.preguntas = preguntas;
+	}
+
+	public Set<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(Set<Usuario> usuarios) {
+		this.usuarios = usuarios;
 	}
 
 	public Integer getIdPreguntaActual() {

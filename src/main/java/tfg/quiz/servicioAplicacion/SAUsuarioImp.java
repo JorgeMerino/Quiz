@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tfg.quiz.objetoNegocio.Reto;
 import tfg.quiz.objetoNegocio.Usuario;
 import tfg.quiz.repositorio.RepositorioUsuario;
 
@@ -24,10 +25,11 @@ public class SAUsuarioImp implements SAUsuario{
 	}
 
 	@Override
-	public List<Usuario> buscarParticipantes() {
-		List<Usuario> usuarios = repositorioUsuario.findAll();
+	public List<Usuario> buscarParticipantes(Reto reto) {
+		List<Usuario> usuarios = repositorioUsuario.findByReto(reto);
 		for(int i = 0; i < usuarios.size(); i++) {
 			usuarios.get(i).setRespuestas(null);
+			usuarios.get(i).setRetos(null);
 		}
 		
 		return usuarios;

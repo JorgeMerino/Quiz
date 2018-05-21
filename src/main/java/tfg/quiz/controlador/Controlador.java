@@ -165,6 +165,7 @@ public class Controlador {
 		Usuario usuario = new Usuario();
 		//usuario.setId(Integer.parseInt(parametros.get("idUsuario")));
 		usuario.setNick(parametros.get("nickUsuario"));
+		usuario.insertarReto(reto);
 		saUsuario.crear(usuario);
 		response.addCookie(new Cookie("idUsuario", Integer.toString(usuario.getId())));
 		return new ModelAndView("redirect:/reto/" + reto.getId() + "/sala-de-espera");
@@ -255,7 +256,8 @@ public class Controlador {
 	@ResponseBody
 	public String obtenerParticipantes(@PathVariable("idReto") int idReto) {
 		Gson gson = new Gson();
-		return gson.toJson(saUsuario.buscarParticipantes());
+		Reto reto = saReto.buscar(idReto);
+		return gson.toJson(saUsuario.buscarParticipantes(reto));
 	}
 	
 	@ModelAttribute("usuario")
