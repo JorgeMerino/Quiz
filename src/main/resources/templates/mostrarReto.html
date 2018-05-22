@@ -44,9 +44,7 @@
 			<a type="button" class="btn btn-azul btn-lg" th:href="|/reto/${dtoReto.id}/insertar-pregunta|">
 			  Añadir Pregunta
 			</a>
-			<form th:if="${!dtoReto.preguntas.empty}" id="lanzarReto" th:action="|http://localhost:8080/asignatura/${dtoReto.grupo}/insertar-reto|" method="POST">
-				<input type="hidden" name="idReto" th:value="${dtoReto.id}"/>
-				<input type="hidden" name="nombreReto" th:value="${dtoReto.nombre}"/>
+			<form th:if="${!dtoReto.preguntas.empty}" id="lanzarReto" th:action="|http://localhost:8080/reto/${dtoReto.id}/cambiar-disponibilidad|" method="POST">
 				<button class="btn btn-azul btn-lg" onclick="this.parentNode.submit()">Lanzar Reto</button>
 			</form>
 		</div>

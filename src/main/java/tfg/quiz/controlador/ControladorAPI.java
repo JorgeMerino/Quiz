@@ -2,8 +2,10 @@ package tfg.quiz.controlador;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import tfg.quiz.objetoNegocio.Reto;
 import tfg.quiz.servicioAplicacion.SAReto;
@@ -14,13 +16,15 @@ public class ControladorAPI {
 	@Autowired
 	private SAReto saReto;
 	
-	@RequestMapping(value="/reto/crear", method = RequestMethod.POST)
-	public void crearReto(String nombre) {
-		Reto reto = new Reto(nombre);
+	@RequestMapping(value="/reto/{idReto}/crear", method = RequestMethod.POST)
+	@ResponseBody
+	public void crearReto(@PathVariable("idReto") int idReto, String nombre) {
+		Reto reto = new Reto(idReto, nombre);
 		saReto.crear(reto);
 	}
 	
 	@RequestMapping(value="/reto/eliminar", method = RequestMethod.POST)
+	@ResponseBody
 	public void eliminarReto(int id) {
 		Reto reto = saReto.buscar(id);
 		saReto.eliminar(reto);

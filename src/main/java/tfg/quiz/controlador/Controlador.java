@@ -163,7 +163,7 @@ public class Controlador {
 			HttpServletResponse response) {
 		Reto reto = saReto.buscar(idReto);
 		Usuario usuario = new Usuario();
-		//usuario.setId(Integer.parseInt(parametros.get("idUsuario")));
+		usuario.setId(Integer.parseInt(parametros.get("idUsuario")));
 		usuario.setNick(parametros.get("nickUsuario"));
 		usuario.insertarReto(reto);
 		saUsuario.crear(usuario);

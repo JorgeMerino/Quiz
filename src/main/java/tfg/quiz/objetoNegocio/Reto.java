@@ -7,8 +7,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
@@ -22,7 +20,6 @@ import tfg.quiz.dto.DTOReto;
 @Table(name = "retos")
 public class Reto {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
 	@NotEmpty
@@ -49,7 +46,8 @@ public class Reto {
 		this.idPreguntaActual = null;
 	}
 	
-	public Reto(String nombre) {
+	public Reto(int id, String nombre) {
+		this.id = id;
 		this.nombre = nombre;
 		this.disponible = false;
 		this.preguntas = new ArrayList<Pregunta>();

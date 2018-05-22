@@ -5,8 +5,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -18,12 +16,9 @@ import javax.persistence.Table;
 @Table(name = "usuarios")
 public class Usuario {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
 	private String nick;
-	
-	private Rol rol;
 	
 	@ManyToMany(cascade = { 
         CascadeType.PERSIST, 
@@ -39,6 +34,11 @@ public class Usuario {
 			cascade = CascadeType.ALL,
 			orphanRemoval = true)
 	private Set<Respuesta> respuestas;
+	
+	public Usuario(int id) {
+		this.id = id;
+		this.respuestas = new HashSet<Respuesta>();
+	}
 	
 	public Usuario() {
 		this.respuestas = new HashSet<Respuesta>();
@@ -62,14 +62,6 @@ public class Usuario {
 
 	public void setNick(String nick) {
 		this.nick = nick;
-	}
-
-	public Rol getRol() {
-		return rol;
-	}
-
-	public void setRol(Rol rol) {
-		this.rol = rol;
 	}
 
 	public Set<Reto> getRetos() {
