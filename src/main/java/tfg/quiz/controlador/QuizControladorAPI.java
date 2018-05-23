@@ -12,7 +12,7 @@ import tfg.quiz.servicioAplicacion.SAReto;
 
 @Controller
 @RequestMapping(value="/api")
-public class ControladorAPI {
+public class QuizControladorAPI {
 	@Autowired
 	private SAReto saReto;
 	

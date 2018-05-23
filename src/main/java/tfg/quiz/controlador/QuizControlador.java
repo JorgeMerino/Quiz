@@ -36,7 +36,7 @@ import tfg.quiz.servicioAplicacion.SAReto;
 import tfg.quiz.servicioAplicacion.SAUsuario;
 
 @Controller
-public class Controlador {
+public class QuizControlador {
 	@Autowired
 	private SAReto saReto;
 	@Autowired
@@ -209,6 +209,13 @@ public class Controlador {
 		reto.setIdPreguntaActual(idPreguntaActual);
 		saReto.crear(reto);
 		return new ModelAndView("redirect:/reto/" + reto.getId() + "/dirigir-reto");
+	}
+	
+	@RequestMapping(value="/reto/{idReto}/lanzar-reto", method = RequestMethod.POST)
+	public ModelAndView lanzarReto(@PathVariable("idReto") int idReto) {
+		Reto reto = saReto.buscar(idReto);
+		saReto.lanzar(reto);
+		return new ModelAndView("redirect:/reto/" + reto.getId() + "/sala-de-espera");
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/guardar-respuesta", method = RequestMethod.POST)

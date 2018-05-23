@@ -40,11 +40,11 @@
 			  </tbody>
 			</table>
 			
-			<!-- Button trigger modal -->
+			<a class="btn btn-secondary btn-lg" href="http://localhost:8080/api/reto/${dtoReto.id}/ir-a-asignatura">Atrás</a>
 			<a type="button" class="btn btn-azul btn-lg" th:href="|/reto/${dtoReto.id}/insertar-pregunta|">
 			  Añadir Pregunta
 			</a>
-			<form th:if="${!dtoReto.preguntas.empty}" id="lanzarReto" th:action="|http://localhost:8080/reto/${dtoReto.id}/cambiar-disponibilidad|" method="POST">
+			<form th:if="${!dtoReto.preguntas.empty}" id="lanzarReto" th:action="|/reto/${dtoReto.id}/lanzar-reto|" method="POST">
 				<button class="btn btn-azul btn-lg" onclick="this.parentNode.submit()">Lanzar Reto</button>
 			</form>
 		</div>

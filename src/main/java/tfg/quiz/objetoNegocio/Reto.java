@@ -25,8 +25,6 @@ public class Reto {
 	@NotEmpty
 	private String nombre;
 	
-	private boolean disponible;
-	
 	@OneToMany(
 		mappedBy = "reto", 
 		cascade = CascadeType.ALL, 
@@ -40,7 +38,6 @@ public class Reto {
 	private Integer idPreguntaActual;
 	
 	public Reto() {
-		this.disponible = false;
 		this.preguntas = new ArrayList<Pregunta>();
 		this.usuarios = new HashSet<>();
 		this.idPreguntaActual = null;
@@ -49,7 +46,6 @@ public class Reto {
 	public Reto(int id, String nombre) {
 		this.id = id;
 		this.nombre = nombre;
-		this.disponible = false;
 		this.preguntas = new ArrayList<Pregunta>();
 		this.usuarios = new HashSet<>();
 		this.idPreguntaActual = null;
@@ -79,14 +75,6 @@ public class Reto {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	}
-
-	public boolean isDisponible() {
-		return disponible;
-	}
-
-	public void setDisponible(boolean disponible) {
-		this.disponible = disponible;
 	}
 
 	public List<Pregunta> getPreguntas() {
