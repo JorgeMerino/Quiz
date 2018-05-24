@@ -25,22 +25,22 @@
     				<div class="cronometro" id="cronometro"></div>
     			</div>  			
     		</div>
-    		<div class="mensajeAcierto" id="mensajeAcierto" style="display: none;">
-    			<h1><i class="material-icons">check_circle_outline</i></h1>
-    			<h1>Correcto</h1> 				
+    		<div id="mostrarRespuesta">
+    			<h2 id="nombrePregunta"></h2>
+    			<h2 id="respuestaCorrecta" class="texto-verde"></h2>
+    			<button class="btn btn-primary btn-lg" id="botonSiguientePregunta" onclick="finalizarPregunta()">Siguiente Pregunta</button>
     		</div>
-    		<div class="mensajeError" id="mensajeError" style="display: none;">
-    			<h1><i class="material-icons">clear</i></h1>
-    			<h1>Error</h1> 
-    		</div>
-    		<div class="mensajeFin" id="mensajeFin" style="display: none;">
-    			<h2>¡Enhorabuena, has terminado este reto!</h2> 				
-    		</div>
+    		
+			<div id="fin">
+				<h2>¡Enhorabuena! El reto ha finalizado</h2>
+				<a th:href="|http://localhost:8080/api/reto/${reto.id}/ir-a-asignatura|">Volver a TFG</a>
+			</div>
+    		
     		<div th:each="pregunta, iteradorPregunta : ${reto.preguntas}" th:id="${pregunta.id}" th:style="${iteradorPregunta.index==0} ? 'display:inline;' : 'display:none;'">
     			<h3 th:text="${pregunta.cuestion}"></h3>
     			<div class="row">
     			  <div class="col-6">
-	    			<div class="card text-white bg-primary mb-3 col-12">
+	    			<div class="card text-white bg-primary mb-3 col-12" style="cursor:default;">
 					  <div class="card-header">A</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[0].respuesta}"></h4>
@@ -48,7 +48,7 @@
 					</div>
 				  </div>
 				  <div class="col-6">
-					<div class="card text-white bg-success mb-3 col-12">
+					<div class="card text-white bg-success mb-3 col-12" style="cursor:default;">
 					  <div class="card-header">B</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[1].respuesta}"></h4>
@@ -56,7 +56,7 @@
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 2}">
-					<div class="card text-white bg-danger mb-3 col-12">
+					<div class="card text-white bg-danger mb-3 col-12" style="cursor:default;">
 					  <div class="card-header">C</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[2].respuesta}"></h4>
@@ -64,7 +64,7 @@
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 3}">
-					<div class="card text-white bg-warning mb-3 col-12">
+					<div class="card text-white bg-warning mb-3 col-12" style="cursor:default;">
 					  <div class="card-header">D</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[3].respuesta}"></h4>
@@ -73,11 +73,6 @@
 				  </div>
 				</div>
     		</div>
-    		<button class="btn btn-primary btn-lg" id="botonSiguientePregunta" onclick="finalizarPregunta()">Siguiente Pregunta</button>
-			<div id="fin">
-				<h2>¡Enhorabuena! El reto ha finalizado</h2>
-				<a href="sala-de-espera">Volver a la sala de espera</a>
-			</div>
     	</div>
 	</div>    
 
@@ -103,12 +98,11 @@
     		idPregunta = idPreguntaLocal;
     		tiempoPregunta = tiempoPreguntaLocal * 1000;
     		iniciarCronometro();
-    		$("#botonSiguientePregunta").css({"display": "none"});
+    		$("#mostrarRespuesta").css({"display": "none"});
     		$("#fin").css({"display": "none"});
     	}
     	
     	function finalizarPregunta(){
-    		pararCronometro();
     		if($("#" + idPregunta).next().is('div')){
     			idPregunta = $("#" + idPregunta).next().attr( "id" );
     		}
@@ -116,7 +110,7 @@
     			idPregunta = null;
     			$("#cronometro").css({"display": "none"});
     			$("#fin").css({"display": "block"});
-    			$("#botonSiguientePregunta").css({"display": "none"});
+    			$("#mostrarRespuesta").css({"display": "none"});
     		}
     		    		
     		$.ajax({
@@ -132,20 +126,37 @@
     		
     		if(idPregunta != null){
     			iniciarCronometro();
-        		$("#botonSiguientePregunta").css({"display": "none"});
+        		$("#mostrarRespuesta").css({"display": "none"});
         		$("#" + idPregunta).css({"display": "block"});
     		}    		
-    	}    	
-	    
+    	}
+		
+    	function mostrarRespuesta(){
+    		$.ajax({
+	  			type: "GET",
+	  			url: "obtener-respuesta-actual",
+	  			dataType: "json",
+	  			data: {"idPregunta": idPregunta},
+	  			success: function(datos){
+	  				$("#" + idPregunta).css({"display": "none"});
+	  				$("#respuestaCorrecta").text("");
+	  	    		$("#mostrarRespuesta").css({"display": "block"});
+	  	    		$("#nombrePregunta").text(datos.nombrePregunta);
+	  	    		$("#respuestaCorrecta").text(`Respuesta correcta: ${datos.respuestaCorrecta}`);
+    	        },
+    	        async: false
+	  		});
+    	}
+    	
 	    function cronometro() {
 	    	tiempoActual = tiempoInicio - new Date().getTime();
 	    	if(tiempoActual > 0){
 	    		document.getElementById("cronometro").innerHTML = Math.trunc(tiempoActual/1000);	    		
 	    	}
 	    	else{
+	    		pararCronometro();
 	    		document.getElementById("cronometro").innerHTML = 0;
-	    		$("#" + idPregunta).css({"display": "none"});
-	    		$("#botonSiguientePregunta").css({"display": "block"});	    		
+	    		setTimeout(function(){ mostrarRespuesta(); }, 500);	    		
 	    	}	    	
 	    }
 	    

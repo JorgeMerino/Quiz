@@ -32,7 +32,8 @@
     			<h1>Error</h1> 
     		</div>
     		<div class="mensajeFin" id="mensajeFin" style="display: none;">
-    			<h2>¡Enhorabuena, has terminado este reto!</h2> 				
+    			<h2>¡Enhorabuena, has terminado este reto!</h2>
+    			<a th:href="|http://localhost:8080/api/reto/${reto.id}/ir-a-asignatura|">Volver a TFG</a>
     		</div>
     		<div th:each="pregunta, iteradorPregunta : ${reto.preguntas}" th:id="${pregunta.id}" th:style="${iteradorPregunta.index==0} ? 'display:inline;' : 'display:none;'">
     			<div class="row">
@@ -120,7 +121,9 @@
     					
     					//Si la siguiente es nula, se vuelve a la sala de espera
     					if(idPregunta != null && respuesta.idPreguntaActual == null){
-    						window.location.href = "sala-de-espera";
+    						$("#mensajeAcierto").css({"display": "none"});
+    			   			$("#mensajeError").css({"display": "none"});
+    						$("#mensajeFin").css({"display": "block"});
     					}
     					//Si no, actualiza la pregunta
     					else if(idPregunta != respuesta.idPreguntaActual){

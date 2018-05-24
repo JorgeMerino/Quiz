@@ -8,4 +8,5 @@ public interface SAReto {
 	public void buscarTodos();
 	public void eliminar(Reto reto);
 	public void lanzar(Reto reto);
+	public void deshabilitar(Reto reto);
 }

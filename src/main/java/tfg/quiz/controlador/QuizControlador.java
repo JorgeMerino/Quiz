@@ -208,6 +208,7 @@ public class QuizControlador {
 		Integer idPreguntaActual = reto.getPreguntas().get(0).getId();
 		reto.setIdPreguntaActual(idPreguntaActual);
 		saReto.crear(reto);
+		saReto.deshabilitar(reto);
 		return new ModelAndView("redirect:/reto/" + reto.getId() + "/dirigir-reto");
 	}
 	
@@ -234,7 +235,7 @@ public class QuizControlador {
 	
 	@RequestMapping(value="/reto/{idReto}/siguiente-pregunta", method = RequestMethod.POST)
 	@ResponseBody
-	public String guardarPreguntaActual(@PathVariable("idReto") int idReto, Integer idPregunta) {
+	public String siguientePregunta(@PathVariable("idReto") int idReto, Integer idPregunta) {
 		Reto reto = saReto.buscar(idReto);
 		reto.setIdPreguntaActual(idPregunta);
 		saReto.crear(reto);
@@ -246,17 +247,36 @@ public class QuizControlador {
 	@ResponseBody
 	public String obtenerPreguntaActual(@PathVariable("idReto") int idReto) {
 		Reto reto = saReto.buscar(idReto);
-		Integer tiempoActual, idPreguntaActual = reto.getIdPreguntaActual();
+		Pregunta pregunta = null;
+		Integer tiempoActual = null, idPreguntaActual = reto.getIdPreguntaActual();
 		
-		if(idPreguntaActual == null) {
-			tiempoActual = null;
+		if(idPreguntaActual != null){
+			pregunta = saPregunta.buscar(reto.getIdPreguntaActual());
+			tiempoActual = pregunta.getTiempoRespuesta();			
 		}
-		else {
-			tiempoActual = saPregunta.buscar(reto.getIdPreguntaActual()).getTiempoRespuesta();
+
+		return "{\"idPreguntaActual\": \"" + idPreguntaActual + "\", \"tiempoActual\": \"" + tiempoActual + "\"}";
+	}
+	
+	@RequestMapping(value="/reto/{idReto}/obtener-respuesta-actual", method = RequestMethod.GET)
+	@ResponseBody
+	public String obtenerRespuestaActual(@PathVariable("idReto") int idReto) {
+		Reto reto = saReto.buscar(idReto);
+		Pregunta pregunta = null;
+		Integer idPreguntaActual = reto.getIdPreguntaActual();
+		String respuestaCorrecta = null, nombrePregunta = null;
+		
+		if(idPreguntaActual != null){
+			pregunta = saPregunta.buscar(reto.getIdPreguntaActual());
+			nombrePregunta = pregunta.getCuestion();
+			for(Opcion o : pregunta.getOpciones()) {
+				if(o.isCorrecta()) {
+					respuestaCorrecta = o.getRespuesta();
+				}
+			}			
 		}
 		
-		String respuesta = "{\"idPreguntaActual\": \"" + idPreguntaActual + "\", \"tiempoActual\": \"" + tiempoActual + "\"}";		
-		return respuesta;
+		return "{\"nombrePregunta\": \"" + nombrePregunta + "\", \"respuestaCorrecta\": \"" + respuestaCorrecta + "\"}";
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/obtener-participantes", method = RequestMethod.GET)

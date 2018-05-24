@@ -44,10 +44,23 @@ public class SARetoImp implements SAReto {
 	public void lanzar(Reto reto) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		String url = baseUrl + "/api/reto/" + reto.getId() + "/cambiar-disponibilidad";
+		String url = baseUrl + "/api/reto/" + reto.getId() + "/activar-disponibilidad";
 
 		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-		map.add("disponible", "true");
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.postForEntity( url, request, String.class );
+		System.out.println(response);
+	}
+
+	@Override
+	public void deshabilitar(Reto reto) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		String url = baseUrl + "/api/reto/" + reto.getId() + "/cancelar-disponibilidad";
+
+		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 
 		RestTemplate restTemplate = new RestTemplate();
