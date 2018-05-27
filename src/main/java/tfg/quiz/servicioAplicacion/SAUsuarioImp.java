@@ -1,9 +1,12 @@
 package tfg.quiz.servicioAplicacion;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import tfg.quiz.objetoNegocio.Reto;
 import tfg.quiz.objetoNegocio.Usuario;
@@ -33,5 +36,14 @@ public class SAUsuarioImp implements SAUsuario{
 		}
 		
 		return usuarios;
+	}
+
+	@Override
+	public boolean comprobarUsuario(int id, String token) {
+		RestTemplate restTemplate = new RestTemplate();
+		String result = restTemplate.getForObject("http://localhost:8080/api/comprobar-usuario?idUsuario=" + id + "&token=" + token, String.class);
+		System.out.println(result);
+		
+		return Boolean.parseBoolean(result);
 	}
 }

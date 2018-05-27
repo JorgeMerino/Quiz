@@ -24,6 +24,7 @@
 			<h6 th:text="|Reto - ${dtoReto.nombre}|"></h6>
 	    	<form class="row justify-content-center form-inline formulario" action="insertar-nick" th:object="${usuario}" method="POST">
 	    	  <input type="hidden" name="idUsuario" th:value="${idUsuario}"/>
+	    	  <input type="hidden" name="token" th:value="${token}"/>
 			  <div class="form-group mx-sm-3 mb-2">
 			    <input type="text" class="form-control-lg input-crear-reto" name="nickUsuario" placeholder="Introduce tu nick">
 			  </div>

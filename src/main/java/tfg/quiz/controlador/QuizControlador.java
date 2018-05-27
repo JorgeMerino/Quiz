@@ -148,11 +148,12 @@ public class QuizControlador {
 	
 	@RequestMapping(value="/reto/{idReto}/insertar-nick", method = RequestMethod.GET)
 	public ModelAndView mostrarInsertarNick(@PathVariable("idReto") int idReto,
-			int idUsuario) {
+			int idUsuario, String token) {
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
 		modelAndView.addObject("dtoReto", reto);
 		modelAndView.addObject("idUsuario", idUsuario);
+		modelAndView.addObject("token", token);
 		modelAndView.setViewName("index");
 		return modelAndView;
 	}
@@ -161,14 +162,23 @@ public class QuizControlador {
 	public ModelAndView insertarNick(@PathVariable("idReto") int idReto,
 			 @RequestParam Map<String, String> parametros,
 			HttpServletResponse response) {
-		Reto reto = saReto.buscar(idReto);
-		Usuario usuario = new Usuario();
-		usuario.setId(Integer.parseInt(parametros.get("idUsuario")));
-		usuario.setNick(parametros.get("nickUsuario"));
-		usuario.insertarReto(reto);
-		saUsuario.crear(usuario);
-		response.addCookie(new Cookie("idUsuario", Integer.toString(usuario.getId())));
-		return new ModelAndView("redirect:/reto/" + reto.getId() + "/sala-de-espera");
+		int idUsuario = Integer.parseInt(parametros.get("idUsuario"));
+		String token = parametros.get("token");
+		Reto reto = saReto.buscar(idReto);		
+		boolean usuarioVerificado = saUsuario.comprobarUsuario(idUsuario, token);
+		
+		if(usuarioVerificado) {			
+			Usuario usuario = new Usuario();
+			usuario.setId(idUsuario);
+			usuario.setNick(parametros.get("nickUsuario"));
+			usuario.insertarReto(reto);
+			saUsuario.crear(usuario);
+			response.addCookie(new Cookie("idUsuario", Integer.toString(usuario.getId())));
+			return new ModelAndView("redirect:/reto/" + reto.getId() + "/sala-de-espera");
+		}
+		else {
+			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + reto.getId() + "/ir-a-asignatura");
+		}	
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/sala-de-espera", method = RequestMethod.GET)
