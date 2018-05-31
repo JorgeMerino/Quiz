@@ -33,14 +33,16 @@
     		
 			<div id="fin">
 				<h2>¡Enhorabuena! El reto ha finalizado</h2>
-				<a th:href="|http://localhost:8080/api/reto/${reto.id}/ir-a-asignatura|">Volver a TFG</a>
+				<form th:action="|exportar-volver|" method="POST">
+					<a onclick="this.parentNode.submit()">Exportar resultados y volver a TFG</a>
+				</form>
 			</div>
     		
     		<div th:each="pregunta, iteradorPregunta : ${reto.preguntas}" th:id="${pregunta.id}" th:style="${iteradorPregunta.index==0} ? 'display:inline;' : 'display:none;'">
     			<h3 th:text="${pregunta.cuestion}"></h3>
     			<div class="row">
     			  <div class="col-6">
-	    			<div class="card text-white bg-primary mb-3 col-12" style="cursor:default;">
+	    			<div class="card text-white bg-danger mb-3 col-12" style="cursor:default;">
 					  <div class="card-header">A</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[0].respuesta}"></h4>
@@ -56,7 +58,7 @@
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 2}">
-					<div class="card text-white bg-danger mb-3 col-12" style="cursor:default;">
+					<div class="card text-white bg-warning mb-3 col-12" style="cursor:default;">
 					  <div class="card-header">C</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[2].respuesta}"></h4>
@@ -64,7 +66,7 @@
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 3}">
-					<div class="card text-white bg-warning mb-3 col-12" style="cursor:default;">
+					<div class="card text-white bg-primary mb-3 col-12" style="cursor:default;">
 					  <div class="card-header">D</div>
 					  <div class="card-body">
 					    <h4 class="card-title" th:text="${pregunta.opciones[3].respuesta}"></h4>

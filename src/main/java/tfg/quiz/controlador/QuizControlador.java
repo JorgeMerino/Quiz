@@ -1,5 +1,6 @@
 package tfg.quiz.controlador;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -295,6 +297,13 @@ public class QuizControlador {
 		Gson gson = new Gson();
 		Reto reto = saReto.buscar(idReto);
 		return gson.toJson(saUsuario.buscarParticipantes(reto));
+	}
+	
+	@RequestMapping(value="/reto/{idReto}/exportar-volver", method = RequestMethod.POST)
+	public ModelAndView exportarYVolver(@PathVariable("idReto") int idReto) throws ClientProtocolException, IOException {
+		Reto reto = saReto.buscar(idReto);
+		saRespuesta.exportar(reto);		
+		return new ModelAndView("redirect:http://localhost:8080/api/reto/" + reto.getId() + "/ir-a-asignatura");
 	}
 	
 	@ModelAttribute("usuario")

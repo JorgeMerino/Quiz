@@ -26,8 +26,6 @@ public class Respuesta{
 	private int tiempo;
 	
 	private Integer idOpcionMarcada;
-	
-	private Respuesta() {}
 	 
     public Respuesta(Usuario usuario, Pregunta pregunta) {
         this.usuario = usuario;
@@ -35,7 +33,9 @@ public class Respuesta{
         this.id = new RespuestaId(usuario.getId(), pregunta.getId());
     }
     
-    @Override
+    public Respuesta() {}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
  

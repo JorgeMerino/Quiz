@@ -38,7 +38,7 @@
     		<div th:each="pregunta, iteradorPregunta : ${reto.preguntas}" th:id="${pregunta.id}" th:style="${iteradorPregunta.index==0} ? 'display:inline;' : 'display:none;'">
     			<div class="row">
     			  <div class="col-6">
-	    			<div class="card text-white bg-primary mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[0].id}, ${pregunta.opciones[0].correcta} )|">
+	    			<div class="card text-white bg-danger mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[0].id}, ${pregunta.opciones[0].correcta} )|">
 					  <div class="card-header"></div>
 					  <div class="card-body">
 					    <h1 class="card-title">A</h1>
@@ -54,7 +54,7 @@
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 2}">
-					<div class="card text-white bg-danger mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[2].id}, ${pregunta.opciones[2].correcta} )|">
+					<div class="card text-white bg-warning mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[2].id}, ${pregunta.opciones[2].correcta} )|">
 					  <div class="card-header"></div>
 					  <div class="card-body">
 					    <h1 class="card-title">C</h1>
@@ -62,7 +62,7 @@
 					</div>
 				  </div>
 				  <div class="col-6" th:if="${#lists.size(pregunta.opciones) > 3}">
-					<div class="card text-white bg-warning mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[3].id}, ${pregunta.opciones[3].correcta}, ${pregunta.id} )|">
+					<div class="card text-white bg-primary mb-3 col-12" th:onclick="|respuesta(${pregunta.opciones[3].id}, ${pregunta.opciones[3].correcta}, ${pregunta.id} )|">
 					  <div class="card-header"></div>
 					  <div class="card-body">
 					    <h1 class="card-title">D</h1>
