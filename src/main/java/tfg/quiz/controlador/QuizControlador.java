@@ -2,6 +2,7 @@ package tfg.quiz.controlador;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +23,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.Gson;
 
+import tfg.quiz.objetoNegocio.Mensaje;
 import tfg.quiz.dto.DTOReto;
 import tfg.quiz.objetoNegocio.Opcion;
 import tfg.quiz.objetoNegocio.Pregunta;
 import tfg.quiz.objetoNegocio.Respuesta;
 import tfg.quiz.objetoNegocio.Reto;
+import tfg.quiz.objetoNegocio.Rol;
 import tfg.quiz.objetoNegocio.Usuario;
 import tfg.quiz.servicioAplicacion.SAOpcion;
 import tfg.quiz.servicioAplicacion.SAPregunta;
@@ -61,17 +65,51 @@ public class QuizControlador {
 	}
 	
 	@RequestMapping(value="/reto/{idReto}", method = RequestMethod.GET)
-	public ModelAndView mostrarReto(@PathVariable("idReto") int idReto) {
+	public ModelAndView mostrarReto(@PathVariable("idReto") int idReto, @ModelAttribute("usuario") Usuario usuario) {
+		if(usuario == null || usuario.getRol() != Rol.Profesor)
+			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + idReto + "/ir-a-asignatura");
+		
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
 		DTOReto dtoReto = DTOReto.toDTO(reto);
-		modelAndView.addObject("dtoReto", dtoReto);
+		modelAndView.addObject("dtoReto", dtoReto);		
 		modelAndView.setViewName("mostrarReto");
 		return modelAndView;
 	}
 	
+	@RequestMapping(value="/reto/{idReto}/validar-profesor", method = RequestMethod.POST)
+	public ModelAndView validarProfesor(@PathVariable("idReto") int idReto,
+			 @RequestParam Map<String, String> parametros,
+			HttpServletResponse response,
+			final RedirectAttributes redirectAttrs) {
+		int idUsuario = Integer.parseInt(parametros.get("idUsuario"));
+		String token = parametros.get("token");
+		Reto reto = saReto.buscar(idReto);		
+		Map<String, String> resultado = saUsuario.comprobarUsuario(idUsuario, token);
+		
+		if(Boolean.parseBoolean(resultado.get("verificado")) && resultado.get("rol").equals("Profesor")) {			
+			Usuario usuario = new Usuario();
+			usuario.setId(idUsuario);
+			usuario.setNick(null);
+			usuario.setRol(Rol.Profesor);
+			usuario.insertarReto(reto);
+			saUsuario.crear(usuario);
+			response.addCookie(new Cookie("idUsuario", Integer.toString(usuario.getId())));
+			return new ModelAndView("redirect:/reto/" + reto.getId());
+		}
+		else {
+			Mensaje mensaje = new Mensaje("Error", "no se ha podido validar correctamente el usuario. Operación cancelada", "rojo");
+			mensaje.setIcono("block");
+			redirectAttrs.addFlashAttribute("mensaje", mensaje);
+			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + reto.getId() + "/ir-a-asignatura");
+		}	
+	}
+	
 	@RequestMapping(value="/reto/{idReto}/insertar-pregunta", method = RequestMethod.GET)
-	public ModelAndView mostrarInsertarPregunta(@PathVariable("idReto") int idReto) {
+	public ModelAndView mostrarInsertarPregunta(@PathVariable("idReto") int idReto, @ModelAttribute("usuario") Usuario usuario) {
+		if(usuario == null || usuario.getRol() != Rol.Profesor)
+			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + idReto + "/ir-a-asignatura");
+		
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
 		modelAndView.addObject("dtoReto", reto);
@@ -129,7 +167,10 @@ public class QuizControlador {
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/modificar-pregunta", method = RequestMethod.GET)
-	public ModelAndView mostrarModificarPregunta(@PathVariable("idReto") int idReto, @ModelAttribute("id") int idPregunta) {
+	public ModelAndView mostrarModificarPregunta(@PathVariable("idReto") int idReto, @ModelAttribute("id") int idPregunta, @ModelAttribute("usuario") Usuario usuario) {
+		if(usuario == null || usuario.getRol() != Rol.Profesor)
+			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + idReto + "/ir-a-asignatura");
+		
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
 		Pregunta pregunta = saPregunta.buscar(idPregunta);
@@ -163,22 +204,27 @@ public class QuizControlador {
 	@RequestMapping(value="/reto/{idReto}/insertar-nick", method = RequestMethod.POST)
 	public ModelAndView insertarNick(@PathVariable("idReto") int idReto,
 			 @RequestParam Map<String, String> parametros,
-			HttpServletResponse response) {
+			HttpServletResponse response,
+			final RedirectAttributes redirectAttrs) {
 		int idUsuario = Integer.parseInt(parametros.get("idUsuario"));
 		String token = parametros.get("token");
 		Reto reto = saReto.buscar(idReto);		
-		boolean usuarioVerificado = saUsuario.comprobarUsuario(idUsuario, token);
+		Map<String, String> resultado = saUsuario.comprobarUsuario(idUsuario, token);
 		
-		if(usuarioVerificado) {			
+		if(Boolean.parseBoolean(resultado.get("verificado")) && resultado.get("rol").equals("Alumno")) {
 			Usuario usuario = new Usuario();
 			usuario.setId(idUsuario);
 			usuario.setNick(parametros.get("nickUsuario"));
+			usuario.setRol(Rol.Alumno);
 			usuario.insertarReto(reto);
 			saUsuario.crear(usuario);
 			response.addCookie(new Cookie("idUsuario", Integer.toString(usuario.getId())));
 			return new ModelAndView("redirect:/reto/" + reto.getId() + "/sala-de-espera");
 		}
 		else {
+			Mensaje mensaje = new Mensaje("Error", "no se ha podido validar correctamente el usuario. Operación cancelada", "rojo");
+			mensaje.setIcono("block");
+			redirectAttrs.addFlashAttribute("mensaje", mensaje);
 			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + reto.getId() + "/ir-a-asignatura");
 		}	
 	}
@@ -234,7 +280,7 @@ public class QuizControlador {
 	@RequestMapping(value="/reto/{idReto}/guardar-respuesta", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public void guardarRespuesta(@PathVariable("idReto") int idReto,
-			Integer idOpcionElegida, int idPregunta, int tiempoTotal, int idUsuario) {
+			Integer idOpcionElegida, int idPregunta, int tiempoTotal, boolean correcta, int idUsuario ) {
 		Usuario usuario = saUsuario.buscar(idUsuario);
 		Pregunta pregunta =saPregunta.buscar(idPregunta);
 		Respuesta respuesta = new Respuesta(usuario, pregunta);
@@ -242,6 +288,7 @@ public class QuizControlador {
 		respuesta.setPregunta(pregunta);
 		respuesta.setTiempo(tiempoTotal);
 		respuesta.setUsuario(usuario);
+		respuesta.setCorrecta(correcta);
 		saRespuesta.crear(respuesta);
 	}
 	

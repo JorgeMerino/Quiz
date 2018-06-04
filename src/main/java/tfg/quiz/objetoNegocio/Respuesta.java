@@ -26,6 +26,8 @@ public class Respuesta{
 	private int tiempo;
 	
 	private Integer idOpcionMarcada;
+	
+	private boolean correcta;
 	 
     public Respuesta(Usuario usuario, Pregunta pregunta) {
         this.usuario = usuario;
@@ -90,5 +92,13 @@ public class Respuesta{
 
 	public void setIdOpcionMarcada(Integer idOpcionMarcada) {
 		this.idOpcionMarcada = idOpcionMarcada;
+	}
+
+	public boolean isCorrecta() {
+		return correcta;
+	}
+
+	public void setCorrecta(boolean correcta) {
+		this.correcta = correcta;
 	}
 }

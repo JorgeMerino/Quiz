@@ -20,6 +20,8 @@ public class Usuario {
 	
 	private String nick;
 	
+	private Rol rol;
+	
 	@ManyToMany(cascade = { 
         CascadeType.PERSIST, 
         CascadeType.MERGE
@@ -58,6 +60,14 @@ public class Usuario {
 
 	public String getNick() {
 		return nick;
+	}
+
+	public Rol getRol() {
+		return rol;
+	}
+
+	public void setRol(Rol rol) {
+		this.rol = rol;
 	}
 
 	public void setNick(String nick) {
