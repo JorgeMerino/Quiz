@@ -45,7 +45,7 @@ public class SAUsuarioImp implements SAUsuario{
 	public Map<String, String> comprobarUsuario(int id, String token) {
 		Gson gson = new Gson(); 
 		RestTemplate restTemplate = new RestTemplate();
-		String result = restTemplate.getForObject("http://localhost:8080/api/comprobar-usuario?idUsuario=" + id + "&token=" + token, String.class);
+		String result = restTemplate.getForObject("http://localhost:9000/api/comprobar-usuario?idUsuario=" + id + "&token=" + token, String.class);
 		System.out.println(result);
 		Map<String,String> map = new HashMap<String,String>();
 		map = (Map<String,String>) gson.fromJson(result, map.getClass());

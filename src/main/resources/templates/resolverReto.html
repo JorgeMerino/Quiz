@@ -33,7 +33,7 @@
     		</div>
     		<div class="mensajeFin" id="mensajeFin" style="display: none;">
     			<h2>¡Enhorabuena, has terminado este reto!</h2>
-    			<a th:href="|http://localhost:8080/api/reto/${reto.id}/ir-a-asignatura|">Volver a TFG</a>
+    			<a th:href="|http://localhost:9000/api/reto/${reto.id}/ir-a-asignatura|">Volver a TFG</a>
     		</div>
     		<div th:each="pregunta, iteradorPregunta : ${reto.preguntas}" th:id="${pregunta.id}" th:style="${iteradorPregunta.index==0} ? 'display:inline;' : 'display:none;'">
     			<div class="row">

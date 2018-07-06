@@ -27,6 +27,8 @@ public class Respuesta{
 	
 	private Integer idOpcionMarcada;
 	
+	private String opcionMarcada;
+	
 	private boolean correcta;
 	 
     public Respuesta(Usuario usuario, Pregunta pregunta) {
@@ -100,5 +102,13 @@ public class Respuesta{
 
 	public void setCorrecta(boolean correcta) {
 		this.correcta = correcta;
+	}
+
+	public String getOpcionMarcada() {
+		return opcionMarcada;
+	}
+
+	public void setOpcionMarcada(String opcionMarcada) {
+		this.opcionMarcada = opcionMarcada;
 	}
 }

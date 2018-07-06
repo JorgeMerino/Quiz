@@ -23,7 +23,7 @@ import tfg.quiz.repositorio.RepositorioRespuesta;
 
 @Service("saRespuesta")
 public class SARespuestaImp implements SARespuesta{
-	public static final String baseUrl = "http://localhost:8080";
+	public static final String baseUrl = "http://localhost:9000";
 	
 	@Autowired
 	private RepositorioRespuesta repositorioRespuesta;
@@ -32,14 +32,17 @@ public class SARespuestaImp implements SARespuesta{
 	public void crear(Respuesta respuesta) {
 		repositorioRespuesta.save(respuesta);
 	}
-
-	@Override
-	public void exportar(Reto reto) throws ClientProtocolException, IOException {
+	
+	public String obtenerJsonRespuestas(Reto reto) {
 		Set<Respuesta> respuestas;
 		String jsonRespuestas;
 		int contadorCorrectas, tiempoTotal, tiempoMedio, puntos, porcentajeAciertos;
 		Integer opcionCorrecta = 0;
-
+		
+		if(reto.getUsuarios().size() <= 1 || reto.getPreguntas().isEmpty()) {
+			return "{ usuarios: []}";
+		}			
+		
 		jsonRespuestas = "{ usuarios: [";
 		for(Usuario usuario : reto.getUsuarios()) {
 			if(usuario.getRol() == Rol.Alumno) {
@@ -65,9 +68,10 @@ public class SARespuestaImp implements SARespuesta{
 							}
 							
 							tiempoTotal += respuesta.getTiempo();
-							jsonRespuestas += "{Pregunta: " + pregunta.getCuestion() + ", " +
-											"OpcionCorrecta: " + opcionCorrecta + ", " +
-											"OpcionMarcada: " + respuesta.getIdOpcionMarcada() + ", " +
+							jsonRespuestas += "{Pregunta: \"" + pregunta.getCuestion() + "\", " +
+											"OpcionCorrecta: \"" + opcionCorrecta + "\", " +
+											"IdOpcionMarcada: " + respuesta.getIdOpcionMarcada() + ", " +
+											"OpcionMarcada: \"" + respuesta.getOpcionMarcada() + "\", " +
 											"Correcta: " + respuesta.isCorrecta() + ", " +
 											"Tiempo: " + respuesta.getTiempo() + "},";
 						}					
@@ -89,6 +93,12 @@ public class SARespuestaImp implements SARespuesta{
 		
 		jsonRespuestas = jsonRespuestas.substring(0, jsonRespuestas.length() - 1) + "]}";
 		
+		return jsonRespuestas;
+	}
+
+	@Override
+	public void exportar(Reto reto) throws ClientProtocolException, IOException {
+		String jsonRespuestas = obtenerJsonRespuestas(reto);		
 		StringEntity entity = new StringEntity(jsonRespuestas, ContentType.APPLICATION_JSON);
 
         HttpClient httpClient = HttpClientBuilder.create().build();

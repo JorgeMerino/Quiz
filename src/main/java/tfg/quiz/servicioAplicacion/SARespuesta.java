@@ -9,5 +9,6 @@ import tfg.quiz.objetoNegocio.Reto;
 
 public interface SARespuesta {
 	public void crear(Respuesta respuesta);
+	public String obtenerJsonRespuestas(Reto reto);
 	public void exportar(Reto reto) throws ClientProtocolException, IOException;
 }

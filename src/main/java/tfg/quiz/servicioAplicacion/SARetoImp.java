@@ -15,7 +15,7 @@ import tfg.quiz.repositorio.RepositorioReto;
 
 @Service("SAReto")
 public class SARetoImp implements SAReto {
-	public static final String baseUrl = "http://localhost:8080";
+	public static final String baseUrl = "http://localhost:9000";
 	
 	@Autowired
 	private RepositorioReto repositorioReto;

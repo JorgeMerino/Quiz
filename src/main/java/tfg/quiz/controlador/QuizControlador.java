@@ -2,7 +2,6 @@ package tfg.quiz.controlador;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +66,7 @@ public class QuizControlador {
 	@RequestMapping(value="/reto/{idReto}", method = RequestMethod.GET)
 	public ModelAndView mostrarReto(@PathVariable("idReto") int idReto, @ModelAttribute("usuario") Usuario usuario) {
 		if(usuario == null || usuario.getRol() != Rol.Profesor)
-			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + idReto + "/ir-a-asignatura");
+			return new ModelAndView("redirect:http://localhost:9000/api/reto/" + idReto + "/ir-a-asignatura");
 		
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
@@ -101,14 +100,14 @@ public class QuizControlador {
 			Mensaje mensaje = new Mensaje("Error", "no se ha podido validar correctamente el usuario. Operación cancelada", "rojo");
 			mensaje.setIcono("block");
 			redirectAttrs.addFlashAttribute("mensaje", mensaje);
-			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + reto.getId() + "/ir-a-asignatura");
+			return new ModelAndView("redirect:http://localhost:9000/api/reto/" + reto.getId() + "/ir-a-asignatura");
 		}	
 	}
 	
 	@RequestMapping(value="/reto/{idReto}/insertar-pregunta", method = RequestMethod.GET)
 	public ModelAndView mostrarInsertarPregunta(@PathVariable("idReto") int idReto, @ModelAttribute("usuario") Usuario usuario) {
 		if(usuario == null || usuario.getRol() != Rol.Profesor)
-			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + idReto + "/ir-a-asignatura");
+			return new ModelAndView("redirect:http://localhost:9000/api/reto/" + idReto + "/ir-a-asignatura");
 		
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
@@ -169,7 +168,7 @@ public class QuizControlador {
 	@RequestMapping(value="/reto/{idReto}/modificar-pregunta", method = RequestMethod.GET)
 	public ModelAndView mostrarModificarPregunta(@PathVariable("idReto") int idReto, @ModelAttribute("id") int idPregunta, @ModelAttribute("usuario") Usuario usuario) {
 		if(usuario == null || usuario.getRol() != Rol.Profesor)
-			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + idReto + "/ir-a-asignatura");
+			return new ModelAndView("redirect:http://localhost:9000/api/reto/" + idReto + "/ir-a-asignatura");
 		
 		ModelAndView modelAndView = new ModelAndView();
 		Reto reto = saReto.buscar(idReto);
@@ -225,7 +224,7 @@ public class QuizControlador {
 			Mensaje mensaje = new Mensaje("Error", "no se ha podido validar correctamente el usuario. Operación cancelada", "rojo");
 			mensaje.setIcono("block");
 			redirectAttrs.addFlashAttribute("mensaje", mensaje);
-			return new ModelAndView("redirect:http://localhost:8080/api/reto/" + reto.getId() + "/ir-a-asignatura");
+			return new ModelAndView("redirect:http://localhost:9000/api/reto/" + reto.getId() + "/ir-a-asignatura");
 		}	
 	}
 	
@@ -282,13 +281,15 @@ public class QuizControlador {
 	public void guardarRespuesta(@PathVariable("idReto") int idReto,
 			Integer idOpcionElegida, int idPregunta, int tiempoTotal, boolean correcta, int idUsuario ) {
 		Usuario usuario = saUsuario.buscar(idUsuario);
-		Pregunta pregunta =saPregunta.buscar(idPregunta);
+		Pregunta pregunta = saPregunta.buscar(idPregunta);
+		Opcion opcion = saOpcion.buscar(idOpcionElegida);
 		Respuesta respuesta = new Respuesta(usuario, pregunta);
 		respuesta.setIdOpcionMarcada(idOpcionElegida);
 		respuesta.setPregunta(pregunta);
 		respuesta.setTiempo(tiempoTotal);
 		respuesta.setUsuario(usuario);
 		respuesta.setCorrecta(correcta);
+		respuesta.setOpcionMarcada(opcion.getRespuesta());
 		saRespuesta.crear(respuesta);
 	}
 	
@@ -350,7 +351,7 @@ public class QuizControlador {
 	public ModelAndView exportarYVolver(@PathVariable("idReto") int idReto) throws ClientProtocolException, IOException {
 		Reto reto = saReto.buscar(idReto);
 		saRespuesta.exportar(reto);		
-		return new ModelAndView("redirect:http://localhost:8080/api/reto/" + reto.getId() + "/ir-a-asignatura");
+		return new ModelAndView("redirect:http://localhost:9000/api/reto/" + reto.getId() + "/ir-a-asignatura");
 	}
 	
 	@ModelAttribute("usuario")
